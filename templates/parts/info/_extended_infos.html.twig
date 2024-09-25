@@ -1,0 +1,109 @@
+{% import "helper.twig" as helper %}
+
+<table class="table table-striped table-hover table-sm w-100 table-responsive-sm">
+    <tbody>
+    <tr> {# Creation date #}
+        <td>{% trans %}createdAt{% endtrans %}</td>
+        <td>{{ part.addedDate | format_datetime("long")}}</td>
+    </tr>
+
+    <tr>
+        <td>{% trans %}user.creating_user{% endtrans %}</td>
+        <td>{% if is_granted('show_history', part) %}
+                {{ creating_user(part).fullName(true) ?? 'Unknown'|trans }}
+            {% else %}
+                {% trans %}accessDenied{% endtrans %}
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr> {# Last modified date #}
+        <td>{% trans %}lastModified{% endtrans %}</td>
+        <td>{{ part.lastModified | format_datetime("long")}}</td>
+    </tr>
+
+    <tr>
+        <td>{% trans %}user.last_editing_user{% endtrans %}</td>
+        <td>{% if is_granted('show_history', part) %}
+                {{ last_editing_user(part).fullName(true) ?? 'Unknown'|trans }}
+            {% else %}
+                {% trans %}accessDenied{% endtrans %}
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr> {# ID #}
+        <td>{% trans %}id.label{% endtrans %}</td>
+        <td>{{ part.iD }}</td>
+    </tr>
+
+    <tr> {# IPN #}
+        <td>{% trans %}part.edit.ipn{% endtrans %}</td>
+        <td>{{ part.ipn ?? 'part.ipn.not_defined'|trans }}</td>
+    </tr>
+
+    <tr> {# Favorite status #}
+        <td>{% trans %}part.isFavorite{% endtrans %}</td>
+        <td>{{ helper.boolean_badge(part.favorite) }}</td>
+    </tr>
+
+    <tr> {# Build status #}
+        <td>{% trans %}part.is_build_part{% endtrans %}</td>
+        <td>{{ helper.boolean_badge(part.projectBuildPart) }}
+            {% if part.projectBuildPart %}(<a href="{{ entity_url(part.builtProject, "edit") }}">{{ part.builtProject.name }}</a>){% endif %}</td>
+    </tr>
+
+    <tr>
+        <td>{% trans %}part.minOrderAmount{% endtrans %}</td>
+        <td>{% if  pricedetail_helper.minOrderAmount(part) %}
+                {{ pricedetail_helper.minOrderAmount(part) | format_amount(part.partUnit) }}
+            {% else %}
+                {% trans %}Unknown{% endtrans %}
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+        <td>{% trans %}part.info_provider_reference{% endtrans %}</td>
+        <td>
+            {% if part.providerReference.providerCreated %}
+                {% if part.providerReference.providerUrl %}
+                    <a href="{{ part.providerReference.providerUrl }}" rel="noopener">
+                {% endif %}
+                <span title="{{ part.providerReference.providerKey }}">{{ info_provider_label(part.providerReference.providerKey)|default(part.providerReference.providerKey) }}</span>: {{ part.providerReference.providerId }}
+                <span> ({{ part.providerReference.lastUpdated | format_datetime() }})</span>
+                {% if part.providerReference.providerUrl %}
+                    </a>
+                {% endif %}
+
+                {# Show last updated date #}
+
+            {% else %}
+                {{ helper.boolean_badge(part.providerReference.providerCreated) }}
+            {% endif %}
+
+        </td>
+    </tr>
+
+    <tr>
+        <td>{% trans %}part.edit.tab.eda{% endtrans %}</td>
+        <td>
+            <b>{% trans %}eda_info.reference_prefix{% endtrans %}:</b> {{ part.edaInfo.referencePrefix ?? part.category.edaInfo.referencePrefix ?? "" }}
+            <br>
+            <b>{% trans %}eda_info.value{% endtrans %}:</b> {{ part.edaInfo.value }}
+            <br>
+            <b>{% trans %}eda_info.visibility{% endtrans %}:</b> {{ helper.boolean_badge( part.edaInfo.visibility ?? part.category.edaInfo.visibility) }}
+            <br>
+            <b>{% trans %}eda_info.exclude_from_bom{% endtrans %}:</b> {{ helper.boolean_badge( part.edaInfo.excludeFromBom ?? part.category.edaInfo.excludeFromBom ?? false) }}
+            <br>
+            <b>{% trans %}eda_info.exclude_from_board{% endtrans %}:</b> {{ helper.boolean_badge( part.edaInfo.excludeFromBoard ?? part.category.edaInfo.excludeFromBoard ?? false) }}
+            <br>
+            <b>{% trans %}eda_info.exclude_from_sim{% endtrans %}:</b> {{ helper.boolean_badge( part.edaInfo.excludeFromSim ?? part.category.edaInfo.excludeFromSim ?? false) }}
+            <br>
+            <b>{% trans %}eda_info.kicad_symbol{% endtrans %}:</b> {{ part.edaInfo.kicadSymbol ?? part.category.edaInfo.kicadSymbol ?? "" }}
+            <br>
+            <b>{% trans %}eda_info.kicad_footprint{% endtrans %}:</b> {{ part.edaInfo.kicadFootprint ?? part.footprint.edaInfo.kicadFootprint ?? "" }}
+        </td>
+    </tr>
+    </tbody>
+</table>

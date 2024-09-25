@@ -1,0 +1,5 @@
+{% import "components/attachments.macro.html.twig" as attachments %}
+
+{{ form_row(form.master_picture_attachment) }}
+
+{{ attachments.attachment_edit_list(form.attachments) }}

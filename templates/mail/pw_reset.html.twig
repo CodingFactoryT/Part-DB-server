@@ -1,0 +1,28 @@
+{% extends "mail/base.html.twig" %}
+
+{% block content %}
+<row>
+    <columns>
+        <h4>{% trans with {'%name%': user.fullName|escape } %}email.hi %name%{% endtrans %},</h4>
+        {% trans %}email.pw_reset.message{% endtrans %}
+        <br>
+        <button class="large expand" href="{{ url('pw_reset_new_pw', {user: user.name, token: token}) }}">{% trans %}email.pw_reset.button{% endtrans %}</button>
+        <br>
+        {% trans with {'%url%': url('pw_reset_new_pw') } %}email.pw_reset.fallback{% endtrans %}:
+        <callout class="secondary">
+            <row>
+                <columns>
+                    <p>
+                        <b>{% trans %}email.pw_reset.username{% endtrans %}: </b> {{ user.name }}
+                    </p>
+                    <p>
+                        <b>{% trans %}email.pw_reset.token{% endtrans %}:</b> {{ token }}
+                    </p>
+                </columns>
+            </row>
+        </callout>
+        {% trans with {'%date%' : expiration_date|format_datetime} %}email.pw_reset.valid_unit %date%{% endtrans %}
+    </columns>
+</row>
+
+{% endblock %}

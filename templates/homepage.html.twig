@@ -1,0 +1,80 @@
+{% extends "base.html.twig" %}
+
+{% import "components/new_version.macro.html.twig" as nv %}
+{% import "components/search.macro.html.twig" as search %}
+
+{% block content %}
+
+    {% if is_granted('@system.show_updates') %}
+        {{ nv.new_version_alert(new_version_available, new_version, new_version_url) }}
+    {% endif %}
+
+    {% if is_granted('@parts.read') %}
+        {{ search.search_form("standalone") }}
+        <div class="mb-2"></div>
+    {% endif %}
+
+
+    <div class="rounded p-4 bg-body-secondary">
+        <h1 class="display-3">{{ partdb_title }}</h1>
+        <h4>
+            {% trans %}version.caption{% endtrans %}: {{ shivas_app_version }}
+            {% if git_branch is not empty or git_commit is not empty %}
+                ({{ git_branch ?? '' }}/{{ git_commit ?? '' }})
+            {% endif %}
+        </h4>
+        {% if banner is not empty %}
+            <hr>
+            <div class="latex" data-controller="common--latex">
+                <h5>{{ banner | format_markdown }}</h5>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if show_first_steps %}
+        <div class="card border-info mt-3">
+            <div class="card-header bg-info ">
+                <h4><i class="fa fa-circle-play fa-fw " aria-hidden="true"></i> {% trans %}homepage.first_steps.title{% endtrans %}</h4>
+            </div>
+            <div class="card-body">
+                <div>{% trans with {"%url%": "https://docs.part-db.de/usage/getting_started.html"} %}homepage.first_steps.introduction{% endtrans %}</div>
+                <ul>
+                    <li><a href="{{ path("category_new") }}">{{ 'category.labelp'|trans }}</a></li>
+                    <li><a href="{{ path("store_location_new") }}">{{ 'storelocation.labelp'|trans }}</a></li>
+                    <li><a href="{{ path("footprint_new") }}">{{ 'footprint.labelp'|trans }}</a></li>
+                    <li><a href="{{ path("supplier_new") }}">{{ 'supplier.labelp'|trans }}</a></li>
+                    <li><a href="{{ path("manufacturer_new") }}">{{ 'manufacturer.labelp'|trans }}</a></li>
+                </ul>
+                <div>{% trans with {"%url%": path('part_new')} %}homepage.first_steps.create_part{% endtrans %}</div>
+                <div class="text-muted">{% trans %}homepage.first_steps.hide_hint{% endtrans %}</div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card border-primary mt-3">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="fa fa-book fa-fw" aria-hidden="true"></i> {% trans %}homepage.license{% endtrans %}</h4>
+        </div>
+        <div class="card-body">
+            <p>Part-DB, Copyright &copy; 2019 - {{ "now" | date("Y") }} of <strong>
+                    <a class="link-external" rel="noopener" target="_blank" href="https://github.com/jbtronics/">Jan Böhmer</a>
+                </strong>. <br> Part-DB is published under the <strong>GNU Affero General Public License v3.0 (or later)</strong>, so it comes with <strong>ABSOLUTELY NO WARRANTY</strong>.
+                This is free software, and you are welcome to redistribute it under certain conditions.
+                Click <a href="https://raw.githubusercontent.com/Part-DB/Part-DB-server/master/LICENSE" class="link-external" rel="noopener" target="_blank">here</a> for details.<br>
+            </p>
+            <strong><i class="fab fa-github fa-fw"></i> {% trans %}homepage.github.caption{% endtrans %}:</strong> {% trans with {'%href%': 'https://github.com/Part-DB/Part-DB-server'}%}homepage.github.text{% endtrans %}<br>
+            <strong><i class="fas fa-question fa-fw"></i> {% trans %}homepage.help.caption{% endtrans %}:</strong> {% trans with {'%href%': 'https://docs.part-db.de/'}%}homepage.help.text{% endtrans %}<br>
+            <strong><i class="fas fa-comments fa-fw"></i> {% trans %}homepage.forum.caption{% endtrans %}:</strong> {% trans with {'%href%': 'https://github.com/Part-DB/Part-DB-server/discussions'}%}homepage.forum.text{% endtrans %}<br>
+        </div>
+    </div>
+
+    {% if datatable is not null %}
+        <div class="card mt-3">
+            <div class="card-header"><i class="fas fa-fw fa-history"></i> {% trans %}homepage.last_activity{% endtrans %}</div>
+            <div class="card-body">
+                {% import "components/history_log_macros.html.twig" as log %}
+                {{ log.last_activity_component(datatable) }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

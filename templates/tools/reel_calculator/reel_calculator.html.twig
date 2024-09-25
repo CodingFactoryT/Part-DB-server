@@ -1,0 +1,114 @@
+{% extends "main_card.html.twig" %}
+
+{# Reel and tape values according to this PDF: https://www.vishay.com/docs/20014/smdpack.pdf #}
+
+{% block title %}{% trans %}tools.reel_calc.title{% endtrans %}{% endblock %}
+
+{% block card_title %}
+    <i class="fas fa-ruler"></i> {% trans %}tools.reel_calc.title{% endtrans %}
+{% endblock %}
+
+{% block card_content %}
+    <p class="text-muted">{% trans %}tools.reel_calc.explanation{% endtrans %}</p>
+    <div class="row" {{ stimulus_controller('pages/reelCalculator', {
+        'errorMissingValues': 'tools.reel_calc.missing_values.error' | trans,
+        'errorOuterGreaterInner': 'tools.reel_calc.outer_greater_inner_error' | trans,
+    }) }}>
+        <div class="col-sm-4">
+            <img src="{{ asset('img/smd_reel/smd_reel.svg') }}" alt="Sizes explanation" class="img-fluid img-thumbnail">
+        </div>
+        <div class="col-sm-8">
+            <div class="row mb-2">
+                <label for="reel_dia_inner" class="col-sm-4 col-form-label">{% trans %}tools.reel_calc.inner_dia{% endtrans %} <var>d<sub>0</sub></var>:</label>
+                <div class="col-sm-8">
+                    <div class="input-group" {{ stimulus_controller('elements/preset_input') }}>
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu">
+                            <h6 class="dropdown-header">{% trans %}tools.reel_calc.load_preset{% endtrans %}</h6>
+                            <button class="dropdown-item" data-value="60" {{ stimulus_action('elements/preset_input', 'load') }}>60 mm Reel</button>
+                            <button class="dropdown-item" data-value="62" {{ stimulus_action('elements/preset_input', 'load') }}>62 mm Reel</button>
+                        </div>
+                        <input class="form-control" id="reel_dia_inner" type="number" min="0" {{ stimulus_target('elements/preset_input', 'input') }}>
+                        <span class="input-group-text">mm</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="reel_dia_outer" class="col-sm-4 col-form-label">{% trans %}tools.reel_calc.outer_dia{% endtrans %} <var>d<sub>1</sub></var>:</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input class="form-control" id="reel_dia_outer" type="number" min="0">
+                        <span class="input-group-text">mm</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-2 row">
+                <label for="reel_tape_thick" class="col-sm-4 col-form-label">{% trans %}tools.reel_calc.tape_thick{% endtrans %} <var>a</var>:</label>
+                <div class="col-sm-8">
+                    <div class="input-group" {{ stimulus_controller('elements/preset_input') }}>
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu">
+                            <h6 class="dropdown-header">{% trans %}tools.reel_calc.load_preset{% endtrans %}</h6>
+                            <button class="dropdown-item" data-value="0.8" {{ stimulus_action('elements/preset_input', 'load') }}>8 mm Paper Tape 0603 (0.8 mm)</button>
+                            <button class="dropdown-item" data-value="0.85" {{ stimulus_action('elements/preset_input', 'load') }}>8 mm Paper Tape 0805 (0.85 mm)</button>
+                            <button class="dropdown-item" data-value="1" {{ stimulus_action('elements/preset_input', 'load') }}>8 mm Paper Tape 1206 (1 mm)</button>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item" data-value="0.9" {{ stimulus_action('elements/preset_input', 'load') }}>8 mm Blister 0603 (0.9 mm)</button>
+                            <button class="dropdown-item" data-value="0.95" {{ stimulus_action('elements/preset_input', 'load') }}>8 mm Blister 0805 (0.95 mm)</button>
+                            <button class="dropdown-item" data-value="1.1" {{ stimulus_action('elements/preset_input', 'load') }}>8 mm Blister 1206 (1.1 mm)</button>
+                        </div>
+                        <input class="form-control" id="reel_tape_thick" type="number" min="0" {{ stimulus_target('elements/preset_input', 'input') }}>
+                        <span class="input-group-text">mm</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-2 row">
+                <label for="reel_part_distance" class="col-sm-4 col-form-label">{% trans %}tools.reel_calc.part_distance{% endtrans %} <var>b</var>:</label>
+                <div class="col-sm-8">
+                    <div class="input-group" {{ stimulus_controller('elements/preset_input') }}>
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu">
+                            <h6 class="dropdown-header">{% trans %}tools.reel_calc.load_preset{% endtrans %}</h6>
+                            <button class="dropdown-item" data-target="reel_part_distance" data-value="4" {{ stimulus_action('elements/preset_input', 'load') }}>8 mm Paper Tape 0603/0805/1206 (4 mm)</button>
+                        </div>
+
+                        <input  class="form-control" id="reel_part_distance" type="number" min="0" {{ stimulus_target('elements/preset_input', 'input') }}>
+                        <span class="input-group-text">mm</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm-8 offset-sm-4 ">
+                    <button type="button" {{ stimulus_action('pages/reelCalculator', 'updateReelCalc') }} class="btn btn-primary">{% trans %}tools.reel_calc.update{% endtrans %}</button>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="reel_part_distance" class="col-sm-4 col-form-label">{% trans %}tools.reel_calc.parts_per_meter{% endtrans %}:</label>
+                <div class="col-sm-8">
+                    <span class="form-control-plaintext" id="result_parts_per_meter"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="reel_part_distance" class="col-sm-4 col-form-label">{% trans %}tools.reel_calc.result_length{% endtrans %}:</label>
+                <div class="col-sm-8">
+                    <span class="form-control-plaintext" id="result_length"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="reel_part_distance" class="col-sm-4 col-form-label">{% trans %}tools.reel_calc.result_amount{% endtrans %}:</label>
+                <div class="col-sm-8">
+                    <span class="form-control-plaintext" id="result_amount"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+
+    </script>
+{% endblock %}

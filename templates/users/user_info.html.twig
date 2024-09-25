@@ -1,0 +1,97 @@
+{% extends "main_card.html.twig" %}
+
+{% block title %}{% trans %}user.info.label{% endtrans %}{% endblock %}
+
+{% block card_title %}<i class="fas fa-info-circle fa-fw" aria-hidden="true"></i>
+    {% trans %}user.info.label{% endtrans %}{% endblock %}
+
+{% block card_content %}
+    <div class="card-body row">
+        <div class="col-md-2">
+            <div class="mx-auto">
+                <img class="img-fluid img-thumbnail rounded" alt="User avatar" src="{{ avatar_helper.avatarURL(user) }}">
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form form-horizontal">
+                <div class="form-group row">
+                    <label class="col-form-label col-md-4">{% trans %}user.firstName.label{% endtrans %}</label>
+                    <div class="col-md-8">
+                        <p class="form-control-plaintext">{{ user.firstName }}</p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-4">{% trans %}user.lastName.label{% endtrans %}</label>
+                    <div class="col-md-8">
+                        <p class="form-control-plaintext">{{ user.lastName }}</p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-4">{% trans %}user.email.label{% endtrans %}</label>
+                    <div class="col-md-8">
+                        {% if user.showEmailOnProfile %}
+                            <a class="form-control-plaintext" href="mailto:{{ user.email }}">{{ user.email }}</a>
+                        {% else %}
+                            <span class="form-control-plaintext text-muted">-</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-4">{% trans %}user.department.label{% endtrans %}</label>
+                    <div class="col-md-8">
+                        <p class="form-control-plaintext">{{ user.department }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form form-horizontal">
+                <div class="form-group row">
+                    <label class="col-form-label col-md-4">{% trans %}user.username.label{% endtrans %}</label>
+                    <div class="col-md-8">
+                        <p class="form-control-plaintext">{{ user.name }}</p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-4">{% trans %}group.label{% endtrans %}</label>
+                    <div class="col-md-8">
+                        <p class="form-control-plaintext">{{ user.group.fullPath ?? '' }}</p>
+                    </div>
+                </div>
+                {% if user.samlUser %}
+                    <div class="form-group row">
+                        <div class="col-md-8 offset-md-4">
+                            <span class="badge badge-primary bg-primary"><i class="fa-solid fa-house-user"></i> {% trans %}user.saml_user{% endtrans %}</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% if user.aboutMe is not empty %}
+            <hr>
+            <h5>{% trans %}user.aboutMe.label{% endtrans %}</h5>
+            {{ user.aboutMe | format_markdown }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block additional_content %}
+    {% if is_granted('read', user) or is_granted('show_permissions', user) %}
+        <div class="card mt-3">
+            <div class="card-header"><i class="fas fa-gavel fa-fw"></i>
+                {% trans %}user.permissions{% endtrans %}</div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                {{ form_row(form.permissions) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="mt-2">
+        {% if datatable is defined and datatable is not null %}
+            {% import "components/history_log_macros.html.twig" as log %}
+            {{ log.element_history_component(datatable) }}
+        {% endif %}
+    </div>
+{% endblock %}

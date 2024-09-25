@@ -1,0 +1,37 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% block card_title %}
+    <i class="fas fa-microchip fa-fw"></i> {% trans %}footprint.labelp{% endtrans %}
+{% endblock %}
+
+{% block master_picture_block %}
+    {{ form_row(form.master_picture_attachment) }}
+    {{ form_row(form.footprint_3d) }}
+{% endblock %}
+
+{% block edit_title %}
+    {% trans %}footprint.edit{% endtrans %}: <a href="{{ path('part_list_footprint', {'id': entity.id}) }}">{{ entity.name }}</a>
+{% endblock %}
+
+{% block new_title %}
+    {% trans %}footprint.new{% endtrans %}
+{% endblock %}
+
+{% block additional_controls %}
+    {{ form_row(form.alternative_names) }}
+{% endblock %}
+
+{% block additional_pills %}
+    <li class="nav-item"><a data-bs-toggle="tab" class="nav-link link-anchor" href="#eda">{% trans %}part.edit.tab.eda{% endtrans %}</a></li>
+{% endblock %}
+
+{% block additional_panes %}
+    <div class="tab-pane" id="eda">
+        <div class="row">
+            <div class="col-sm-9 offset-sm-3">
+                <h6>{% trans %}eda_info.kicad_section.title{% endtrans %}:</h6>
+            </div>
+        </div>
+        {{ form_row(form.eda_info.kicad_footprint) }}
+    </div>
+{% endblock %}

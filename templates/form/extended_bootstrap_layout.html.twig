@@ -1,0 +1,142 @@
+{% extends 'bootstrap_5_horizontal_layout.html.twig' %}
+
+{# Make form rows smaller #}
+{% block form_row -%}
+    {%- set row_attr = row_attr|merge({"class": "mb-2"})  -%}
+    {{- parent() -}}
+{%- endblock form_row %}
+
+{% block file_widget -%}
+    {%- set type = type|default('file') -%}
+    {{- block('form_widget_simple') -}}
+{% endblock %}
+
+
+{% block form_label_class -%}
+    col-sm-3
+{%- endblock form_label_class %}
+
+{% block form_group_class -%}
+    col-sm-9
+{%- endblock form_group_class %}
+
+{% block si_unit_widget %}
+    <div class="input-group {% if sm %}input-group-sm{% endif %}">
+        {{ form_widget(form.value) }}
+        {% if form.prefix is defined %}
+            {{ form_widget(form.prefix, {'attr': {'class': '', 'style': 'max-width: 40px;'}}) }}
+        {% endif %}
+        {% if unit is not empty %}
+            <label class="input-group-text">{{ unit }}</label>
+        {% endif %}
+    </div>
+    {{ form_errors(form.value) }}
+{% endblock %}
+
+{#######################################################################################
+#
+#   Definitions for Tristate Checkbox Type (mostly based on bootstrap checkbox type)
+#
+#######################################################################################}
+
+{% block tristate_label -%}
+    {#- Do not display the label if widget is not defined in order to prevent double label rendering -#}
+    {%- if widget is defined -%}
+        {% set is_parent_custom = parent_label_class is defined and ('checkbox-custom' in parent_label_class or 'radio-custom' in parent_label_class) %}
+        {% set is_custom = label_attr.class is defined and ('checkbox-custom' in label_attr.class or 'radio-custom' in label_attr.class) %}
+        {%- if is_parent_custom or is_custom -%}
+            {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' form-check-label')|trim}) -%}
+        {%- else %}
+            {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' form-check-label')|trim}) -%}
+        {%- endif %}
+        {%- if not compound -%}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {%- endif -%}
+        {%- if required -%}
+            {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' required')|trim}) -%}
+        {%- endif -%}
+        {%- if parent_label_class is defined -%}
+            {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' ' ~ parent_label_class)|replace({'checkbox-inline': '', 'radio-inline': '', 'checkbox-custom': '', 'radio-custom': ''})|trim}) -%}
+        {%- endif -%}
+        {%- if label is not same as(false) and label is empty -%}
+            {%- if label_format is not empty -%}
+                {%- set label = label_format|replace({
+                    '%name%': name,
+                    '%id%': id,
+                }) -%}
+            {%- else -%}
+                {%- set label = name|humanize -%}
+            {%- endif -%}
+        {%- endif -%}
+
+        {{ widget|raw }}
+        <label{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}>
+            {{- label is not same as(false) ? (translation_domain is same as(false) ? label : label|trans(label_translation_parameters, translation_domain)) -}}
+            {{- form_errors(form) -}}
+        </label>
+    {%- endif -%}
+{%- endblock tristate_label %}
+
+{%- block tr_parent -%}
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}{% if indeterminate %} indeterminate="indeterminate"{% endif %} />
+{%- endblock tr_parent -%}
+
+{% block tristate_widget -%}
+    {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
+    {%- if 'checkbox-custom' in parent_label_class -%}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) -%}
+        <div class="custom-control custom-checkbox{{ 'checkbox-inline' in parent_label_class ? ' form-check-inline' }}">
+            {{- form_label(form, null, { widget: block('tr_parent') }) -}}
+        </div>
+    {%- else -%}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) -%}
+        <div class="form-check{{ 'checkbox-inline' in parent_label_class ? ' form-check-inline' }}">
+            {{- form_label(form, null, { widget: block('tr_parent') }) -}}
+        </div>
+    {%- endif -%}
+{%- endblock tristate_widget %}
+
+{%- block choice_widget_collapsed -%}
+    {# Only add the BS5 form-select class if we dont use bootstrap-selectpicker  #}
+    {# {% if attr["data-controller"] is defined and attr["data-controller"] not in ["elements--selectpicker"] %}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-select')|trim}) -%}
+    {% else %}
+        {# If it is an selectpicker add form-control class to fill whole width
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-control')|trim}) -%}
+    {% endif %}
+    #}
+
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-select')|trim}) -%}
+
+    {# If no data-controller was explictly defined add data-controller=elements--select #}
+    {% if attr["data-controller"] is not defined %}
+        {%- set attr = attr|merge({"data-controller": "elements--select"}) -%}
+
+        {% if attr["data-empty-message"] is not defined %}
+            {%- set attr = attr|merge({"data-empty-message": ("selectpicker.nothing_selected"|trans)}) -%}
+        {% endif %}
+    {% endif %}
+
+    {{- block("choice_widget_collapsed", "bootstrap_base_layout.html.twig") -}}
+{%- endblock choice_widget_collapsed -%}
+
+{% block part_select_widget %}
+    {{ form_widget(form.autocomplete) }}
+{% endblock %}
+
+{% block password_widget %}
+    {# If password_estimator setting is not set render it like normal #}
+    {% if password_estimator %}
+        <div {{ stimulus_controller('elements/password_strength_estimate') }}>
+            <div class="input-group">
+                <span class="input-group-text d-none">
+                    <span class="badge badge-primary" {{ stimulus_target('elements/password_strength_estimate', 'badge') }}></span>
+                </span>
+                {{- parent() -}}
+            </div>
+            <span class="form-text text-warning" {{ stimulus_target('elements/password_strength_estimate', 'warning') }}></span>
+        </div>
+    {% else %}
+        {{- parent() -}}
+    {% endif %}
+{% endblock %}

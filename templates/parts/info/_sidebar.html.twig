@@ -1,0 +1,82 @@
+{% import "helper.twig" as helper %}
+
+{% if timeTravel is not null %}
+    <b class="mb-2">{% trans with {'%timestamp%': timeTravel|format_datetime('short')} %}part.info.timetravel_hint{% endtrans %}</b>
+{% endif %}
+
+{% if part.projectBuildPart %}
+    <b class="mb-2">{% trans %}part.info.projectBuildPart.hint{% endtrans %}:  <a href="{{ entity_url(part.builtProject) }}">{{ part.builtProject.name }}</a></b>
+{% endif %}
+
+<div class="mb-3">
+<span class="text-muted" title="{% trans %}lastModified{% endtrans %}">
+    <i class="fas fa-history fa-fw"></i>  {{ helper.entity_last_modified(part) }}
+</span>
+    <br>
+    <span class="text-muted mt-1" title="{% trans %}createdAt{% endtrans %}">
+    <i class="fas fa-calendar-plus fa-fw"></i> {{ helper.entity_created_at(part) }}
+</span>
+</div>
+
+{# Part mass #}
+{% if part.mass %}
+    <div>
+        <h6>
+            <span class="badge bg-secondary" title="{% trans %}part.mass.tooltip{% endtrans %}"><i class="fas fa-weight-hanging fa-fw"></i> {{ part.mass | format_si("g") }}</span>
+        </h6>
+    </div>
+{% endif %}
+
+{# Needs Review tag #}
+{% if part.needsReview %}
+    <div class="mt-1">
+        <h6>
+            <span class="badge bg-warning"><i class="fas fa-ambulance fa-fw"></i> {% trans %}part.needs_review.badge{% endtrans %}</span>
+        </h6>
+    </div>
+{% endif %}
+
+{# Favorite Status tag #}
+{% if part.favorite %}
+    <div class="mt-1">
+        <h6>
+            <span class="badge bg-success"><i class="fas fa-award fa-fw"></i> {% trans %}part.favorite.badge{% endtrans %}</span>
+        </h6>
+    </div>
+{% endif %}
+
+{% if part.obsolete %}
+    <div class="mt-1">
+        <h6>
+            <span class="badge bg-danger"><i class="fas fa-ghost fa-fw"></i> {% trans %}part.obsolete.badge{% endtrans %}</span>
+        </h6>
+    </div>
+{% endif %}
+
+{# Manufacturing status tag #}
+<div class="mt-1">
+    <h6>
+        {{ helper.m_status_to_badge(part.manufacturingStatus) }}
+    </h6>
+</div>
+
+{# Show tags #}
+{% if part.tags is not empty %}
+    <div class="mt-1">
+        <h6 style="line-height: 1.5;">
+            {{ helper.string_to_tags(part.tags) }}
+        </h6>
+    </div>
+{% endif %}
+
+{# Info provider badge #}
+{% if part.providerReference.providerCreated %}
+    <div class="mt-1">
+        <h6>
+            <a href="{{ part.providerReference.providerUrl ?? '#' }}" class="badge bg-info badge-info" title="{% trans %}part.info_provider_reference.badge{% endtrans %}">
+                <i class="fa-solid fa-cloud"></i>
+                {{ info_provider_label(part.providerReference.providerKey)|default(part.providerReference.providerKey) }}
+            </a>
+        </h6>
+    </div>
+{% endif %}

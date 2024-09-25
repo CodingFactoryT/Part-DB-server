@@ -1,0 +1,63 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% block card_title %}
+    <i class="fas fa-tags fa-fw"></i> {% trans %}category.labelp{% endtrans %}
+{% endblock %}
+
+{% block additional_pills %}
+    <li class="nav-item"><a data-bs-toggle="tab" class="nav-link link-anchor" href="#home_options">{% trans %}admin.options{% endtrans %}</a></li>
+    <li class="nav-item"><a data-bs-toggle="tab" class="nav-link link-anchor" href="#home_advanced">{% trans %}admin.advanced{% endtrans %}</a></li>
+    <li class="nav-item"><a data-bs-toggle="tab" class="nav-link link-anchor" href="#eda">{% trans %}part.edit.tab.eda{% endtrans %}</a></li>
+{% endblock %}
+
+{% block edit_title %}
+    {% trans %}category.edit{% endtrans %}: <a href="{{ path('part_list_category', {'id': entity.id}) }}">{{ entity.name }}</a>
+{% endblock %}
+
+{% block new_title %}
+    {% trans %}category.new{% endtrans %}
+{% endblock %}
+
+{% block additional_panes %}
+    <div class="tab-pane" id="home_options">
+        {{ form_row(form.disable_footprints) }}
+        {{ form_row(form.disable_manufacturers) }}
+        {{ form_row(form.disable_autodatasheets) }}
+        {{ form_row(form.disable_properties) }}
+    </div>
+
+    <div class="tab-pane" id="home_advanced">
+        {{ form_row(form.alternative_names) }}
+        <hr>
+        {{ form_row(form.partname_regex) }}
+        {{ form_row(form.partname_hint) }}
+        <hr>
+        {{ form_row(form.default_description) }}
+        {{ form_row(form.default_comment) }}
+    </div>
+
+    <div class="tab-pane" id="eda">
+        {{ form_row(form.eda_info.reference_prefix) }}
+
+        <div class="row">
+            <div class="col-sm-9 offset-sm-3">
+                {{ form_row(form.eda_info.visibility) }}
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-9 offset-sm-3">
+                {{ form_widget(form.eda_info.exclude_from_bom) }}
+                {{ form_widget(form.eda_info.exclude_from_board) }}
+                {{ form_widget(form.eda_info.exclude_from_sim) }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-9 offset-sm-3">
+                <h6>{% trans %}eda_info.kicad_section.title{% endtrans %}:</h6>
+            </div>
+        </div>
+        {{ form_row(form.eda_info.kicad_symbol) }}
+    </div>
+{% endblock %}

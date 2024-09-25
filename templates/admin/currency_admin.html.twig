@@ -1,0 +1,42 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% block card_title %}
+    <i class="fa-solid fa-coins"></i> {% trans %}currency.caption{% endtrans %}
+{% endblock %}
+
+{% block additional_controls %}
+    {{ form_row(form.iso_code) }}
+    {% if entity.isoCode %}
+        <div class="mt-0 mb-3">
+        <span class="form-text text-muted offset-3 col-9">
+            <b>{% trans %}currency.iso_code.caption{% endtrans %}:</b> {{ entity.isoCode }}
+        </span>
+            <span class="form-text text-muted offset-3 col-9">
+            <b>{% trans %}currency.symbol.caption{% endtrans %}:</b> {{ entity.isoCode | currency_symbol }}
+        </span>
+        </div>
+    {% endif %}
+
+    {{ form_row(form.exchange_rate) }}
+    {% if entity.inverseExchangeRate %}
+        <p class="form-text text-muted offset-3 col-9">
+        {{ '1'|format_currency(default_currency) }} = {{ entity.inverseExchangeRate.tofloat | format_currency(entity.isoCode, {fraction_digit: 5}) }}<br>
+        {{ '1'|format_currency(entity.isoCode) }} = {{ entity.exchangeRate.tofloat | format_currency(default_currency, {fraction_digit: 5}) }}
+        </p>
+    {% endif %}
+
+
+    {% if form.update_exchange_rate is defined %}
+        {{ form_row(form.update_exchange_rate, {attr: {class: 'btn-info'}}) }}
+    {% endif %}
+
+
+{% endblock %}
+
+{% block edit_title %}
+    {% trans %}currency.edit{% endtrans %}: {{ entity.name }}
+{% endblock %}
+
+{% block new_title %}
+    {% trans %}currency.new{% endtrans %}
+{% endblock %}

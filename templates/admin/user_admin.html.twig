@@ -1,0 +1,114 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% import "helper.twig" as helper %}
+
+{# @var entity \App\Entity\UserSystem\User #}
+
+{% block card_title %}
+    <i class="fas fa-user fa-fw"></i> {% trans %}user.edit.caption{% endtrans %}
+{% endblock %}
+
+{% block comment %}{% endblock %}
+
+{% block additional_pills %}
+    <li class="nav-item"><a data-bs-toggle="tab" class="nav-link link-anchor" href="#configuration">{% trans %}user.edit.configuration{% endtrans %}</a></li>
+    <li class="nav-item"><a data-bs-toggle="tab" class="nav-link link-anchor" href="#password">{% trans %}user.edit.password{% endtrans %}</a></li>
+    <li class="nav-item"><a data-bs-toggle="tab" class="nav-link link-anchor" href="#permissions">{% trans %}user.edit.permissions{% endtrans %}</a></li>
+{% endblock %}
+
+{% block nav_pills_container %}
+
+    <div class="d-flex justify-content-between">
+        {{ parent() }}
+        <div>
+            {% if entity.id is not null and is_granted('CAN_SWITCH_USER', entity) %}
+                <a href="{{ impersonation_path(entity) }}" data-turbo="false" class="btn btn-outline-warning"
+                   {{ stimulus_controller('elements/link_confirm', {title: 'user.impersonate.confirm.title'|trans, message: 'user.impersonate.confirm.message'|trans}) }}
+                >{% trans %}user.impersonate.btn{% endtrans %}</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block additional_controls %}
+    {{ form_row(form.group) }}
+    {{ form_row(form.first_name) }}
+    {{ form_row(form.last_name) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.showEmailOnProfile) }}
+    {{ form_row(form.department) }}
+    {{ form_row(form.aboutMe) }}
+{% endblock %}
+
+{% block additional_panes %}
+    <div class="tab-pane" id="configuration">
+        {{ form_row(form.language) }}
+        {{ form_row(form.timezone) }}
+        {{ form_row(form.theme) }}
+        {{ form_row(form.currency) }}
+    </div>
+
+    <div class="tab-pane" id="password">
+        {% if entity.samlUser %}
+            <div class="offset-3 mb-3 col-9">
+                <span class="badge badge-warning bg-warning"><i class="fa-solid fa-house-user"></i> {% trans %}user.saml_user{% endtrans %}</span>
+            </div>
+        {% endif %}
+
+        {{ form_row(form.new_password) }}
+        {{ form_row(form.need_pw_change) }}
+        {{ form_row(form.disabled) }}
+
+        {% if entity.id is not null %}
+            <div class="offset-3 mb-3">
+                <hr>
+                <h6>{% trans %}user.edit.tfa.caption{% endtrans %}</h6>
+
+                <p><b>{% trans %}user.edit.tfa.google_active{% endtrans %}:</b> {{ helper.boolean(entity.googleAuthenticatorEnabled) }}</p>
+                <p class="mb-0"><b>{% trans %}tfa_backup.remaining_tokens{% endtrans %}:</b> {{ entity.backupCodes | length }}</p>
+                <p><b>{% trans %}tfa_backup.generation_date{% endtrans %}:</b>
+                    {% if entity.backupCodesGenerationDate is not null %}
+                        {{ entity.backupCodesGenerationDate | format_datetime }}
+                    {% else %}
+                        {% trans %}user.edit.tfa.disabled{% endtrans %}
+                    {% endif %}
+                </p>
+                <p><b>{% trans %}user.edit.tfa.u2f_keys_count{% endtrans %}:</b>
+                    {% if entity.webAuthnAuthenticatorEnabled %}
+                        {{ (entity.webauthnKeys | length) + (entity.legacyU2FKeys | length) }}
+                    {% else %}
+                        {% trans %}user.edit.tfa.disabled{% endtrans %}
+                    {% endif %}
+                </p>
+
+                {% set tfa_disable_disabled = not is_granted('set_password', entity) %}
+                {# Disable button when he has no 2FA activated #}
+                {% if not entity.webAuthnAuthenticatorEnabled and not entity.googleAuthenticatorEnabled and entity.backupCodes is empty %}
+                    {% set tfa_disable_disabled = true %}
+                {% endif %}
+
+                <input type="hidden" name="_token" value="{{ csrf_token('reset_2fa' ~ entity.id) }}">
+                <button class="btn btn-warning" {% if tfa_disable_disabled %}disabled="disabled"{% endif %} {{ stimulus_controller('elements/delete_btn') }} {{ stimulus_action('elements/delete_btn', 'click') }}
+                        data-delete-btn data-delete-title="{% trans %}user.edit.tfa.disable_tfa_title{% endtrans %}" data-delete-message="{% trans %}user.edit.tfa.disable_tfa_message{% endtrans %}"
+                        type="submit" name="reset_2fa" value="reset_2fa">{% trans %}user.edit.tfa.disable_tfa.btn{% endtrans %}</button>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <div class="tab-pane" id="permissions">
+        {{ form_row(form.permissions) }}
+    </div>
+{% endblock %}
+
+{% block edit_title %}
+    {% trans %}user.edit{% endtrans %}: <a href="{{ path('user_info', {'id': entity.id}) }}">{{ entity.name }}</a>
+{% endblock %}
+
+{% block new_title %}
+    {% trans %}user.new{% endtrans %}
+{% endblock %}
+
+{% block preview_picture %}
+    <img src="{{ avatar_helper.avatarURL(entity) }}" style="height: 50px;">
+{% endblock %}

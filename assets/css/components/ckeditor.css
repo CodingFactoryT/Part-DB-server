@@ -1,0 +1,77 @@
+/*
+ * This file is part of Part-DB (https://github.com/Part-DB/Part-DB-symfony).
+ *
+ *  Copyright (C) 2019 - 2022 Jan Böhmer (https://github.com/jbtronics)
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as published
+ *  by the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/********************************************************************
+* HTML Label style override
+*********************************************************************/
+
+/** Should be the same settings, as in label_style.css */
+.ck-html-label .ck-content {
+    font-family: "DejaVu Sans Mono", monospace;
+    font-size: 12px;
+    line-height: 1.0;
+    font-size-adjust: 1.5;
+}
+
+.ck-html-label .ck-content p {
+    margin: 0;
+}
+
+.ck-html-label .ck-content hr {
+    margin: 2px;
+}
+
+/***********************************************
+ * Hide CKEditor powered by message
+ ***********************************************/
+.ck-powered-by {
+    display: none;
+}
+
+
+
+
+/***********************************************
+ * Use Bootstrap color vars for CKEditor
+ ***********************************************/
+:root {
+    --ck-color-base-foreground: var(--bs-secondary-bg);
+    --ck-color-base-background: var(--bs-body-bg);
+    --ck-color-base-border: var(--bs-border-color);
+    --ck-color-base-action: var(--bs-success);
+    --ck-color-base-focus: var(--bs-primary-border-subtle);
+    --ck-color-base-text: var(--bs-body-color);
+    --ck-color-base-active: var(--bs-primary-bg-subtle);
+    --ck-color-base-active-focus: var(--bs-primary);
+    --ck-color-base-error: var(--bs-danger);
+
+    /* Improve contrast between text and toolbar */
+    --ck-color-toolbar-background: var(--bs-tertiary-bg);
+
+    /* Buttons */
+    --ck-color-button-default-hover-background: var(--bs-secondary-bg);
+    --ck-color-button-default-active-background: var(--bs-secondary-bg);
+
+    --ck-color-button-on-background: var(--bs-body-bg);
+    --ck-color-button-on-hover-background: var(--bs-secondary-bg);
+    --ck-color-button-on-active-background: var(--bs-secondary-bg);
+    --ck-color-button-on-disabled-background: var(--bs-secondary-bg);
+    --ck-color-button-on-color:	var(--bs-primary)
+
+}

@@ -1,0 +1,40 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    secret: '%env(APP_SECRET)%'
+    csrf_protection: true
+    annotations: false
+    handle_all_throwables: true
+
+    # We set this header by ourselves, so we can disable it here
+    disallow_search_engine_index: false
+
+    # Must be set to true, to enable the change of HTTP method via _method parameter, otherwise our delete routines does not work anymore
+    # TODO: Rework delete routines to work without _method parameter as it is not recommended anymore (see https://github.com/symfony/symfony/issues/45278)
+    http_method_override: true
+
+    # Allow users to configure trusted hosts via .env variables
+    # see https://symfony.com/doc/current/reference/configuration/framework.html#trusted-hosts
+    trusted_hosts: '%env(TRUSTED_HOSTS)%'
+
+    # Allow users to configure reverse proxies via .env variables. Default values are defined in parameters.yaml.
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+    # Trust all headers by default. X-Forwared-Host can be a security risk if your reverse proxy doesn't set it.
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']
+
+    # Enables session support. Note that the session will ONLY be started if you read or write from it.
+    # Remove or comment this section to explicitly disable session support.
+    session:
+        handler_id: null
+        cookie_secure: auto
+        cookie_samesite: lax
+
+    #esi: true
+    #fragments: true
+    php_errors:
+        log: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

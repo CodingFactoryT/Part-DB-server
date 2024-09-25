@@ -1,0 +1,241 @@
+{% macro boolean(value) %}
+    {% if value %}
+        {% trans %}bool.true{% endtrans %}
+    {% else %}
+        {% trans %}bool.false{% endtrans %}
+    {% endif %}
+{% endmacro %}
+
+{% macro array_to_tags(tags, class="badge bg-primary") %}
+    {% for tag in tags %}
+        <span class="{{ class }}">{{ tag | trim }}</span>
+    {% endfor %}
+{% endmacro %}
+
+{% macro bool_icon(bool) %}
+    {% if bool %}
+        <i class="fas fa-check-circle fa-fw" title="{% trans %}Yes{% endtrans %}"></i>
+    {% else %}
+        <i class="fas fa-times-circle fa-fw" title="{% trans %}No{% endtrans %}"></i>
+    {% endif %}
+{% endmacro %}
+
+{% macro boolean_badge(value, class="badge") %}
+    {% if value %}
+        {% set class = class ~ ' bg-success' %}
+    {% else %}
+        {% set class = class ~ ' bg-danger' %}
+    {% endif %}
+
+    <span class="{{ class }}">{{ _self.bool_icon(value) }} {{ _self.boolean(value) }}</span>
+{% endmacro %}
+
+{% macro string_to_tags(string, class="badge bg-info") %}
+    {% for tag in string|split(',') %}
+        <a href="{{ path('part_list_tags', {'tag': tag | trim}) }}" class="{{ class }}" >{{ tag | trim }}</a>
+    {% endfor %}
+{% endmacro %}
+
+{% macro m_status_to_badge(status, class="badge") %}
+    {% if status is enum %}
+        {% set status = status.value %}
+    {% endif %}
+
+    {% if status is not empty %}
+        {% set color = " bg-secondary" %}
+
+        {% if status == "active" %}
+            {% set color = " bg-success" %}
+        {% elseif status == "nrfnd" %}
+            {% set color = " bg-warning" %}
+        {% elseif status == "eol" %}
+            {% set color = " bg-warning" %}
+        {% elseif status == "discontinued" %}
+            {% set color = " bg-danger" %}
+        {% endif %}
+
+        <span class="{{ class ~ color}}" title="{{ ("m_status." ~ status ~ ".help") | trans }}">
+            <i class="fa-fw fas fa-info-circle"></i>
+            {{ ("m_status." ~ status) | trans }}
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{% macro project_status_to_badge(status, class="badge") %}
+    {% if status is not empty %}
+        {% set color = " bg-secondary" %}
+
+        {% if status == "in_production" %}
+            {% set color = " bg-success" %}
+        {% endif %}
+
+        <span class="{{ class ~ color}}">
+            <i class="fa-fw fas fa-info-circle"></i>
+            {{ ("project.status." ~ status) | trans }}
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{% macro structural_entity_link(entity, link_type = "list_parts") %}
+    {# @var entity \App\Entity\Base\StructuralDBElement #}
+    {% if entity %}
+        <ul class="structural_link d-inline">
+            {% for e in entity.pathArray %}
+                <li>
+                    {% if link_type is not empty and e.id is not null %}
+                        <a href="{{ entity_url(e, link_type) }}">{{ e.name }}</a>
+                    {% else %}
+                        {{ e.name }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        -
+    {% endif %}
+{% endmacro %}
+
+{% macro entity_icon(entity_or_type, classes = "", style = "") %}
+    {% set map = {
+        "attachment_type": ["fa-solid fa-file-alt", "attachment_type.label"],
+        "category": ["fa-solid fa-tags", "category.label"],
+        "currency": ["fa-solid fa-coins", "currency.label"],
+        "device": ["fa-solid fa-archive", "project.label"],
+        "footprint": ["fa-solid fa-microchip", "footprint.label"],
+        "group": ["fa-solid fa-users", "group.label"],
+        "label_profile": ["fa-solid fa-qrcode", "label_profile.label"],
+        "manufacturer": ["fa-solid fa-industry", "manufacturer.label"],
+        "measurement_unit": ["fa-solid fa-balance-scale", "measurement_unit.label"],
+        "storelocation": ["fa-solid fa-cube", "storelocation.label"],
+        "supplier": ["fa-solid fa-truck", "supplier.label"],
+        "user": ["fa-solid fa-user", "user.label"],
+    } %}
+
+    {% if entity_or_type is entity %}
+        {% set type = entity_type(entity_or_type) %}
+    {% else %}
+        {% set type = entity_or_type %}
+    {% endif %}
+
+    {% if type is not null and map[type] is defined %}
+        {% set icon = map[type][0] %}
+        {% set label = map[type][1] %}
+    {% else %}
+        {% set icon = "fa-solid fa-question" %}
+        {% set label = "Unknown type " ~ type %}
+    {% endif %}
+
+    <i class="fa-fw {{ icon }} {{ classes }}" style="{{ style }}" title="{{ label | trans }}"></i>
+{% endmacro %}
+
+{% macro breadcrumb_entity_link(entity, link_type = "list_parts", icon = "") %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb py-2 px-3 rounded bg-body-tertiary">
+            {% if icon is not empty %}
+                <i class="{{ icon }} fa-fw me-1" style="line-height: inherit;"></i>
+            {% else %}
+                {{ _self.entity_icon(entity, "me-1", "line-height: inherit;") }}
+            {% endif %}
+            {% for e in entity.pathArray %}
+                <li class="breadcrumb-item {% if loop.last %}active{% endif %}">
+                    {% if link_type is not empty and not loop.last and e.id is not null %}
+                        <a href="{{ entity_url(e, link_type) }}">{{ e.name }}</a>
+                    {% else %}
+                        {{ e.name }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </nav>
+{% endmacro %}
+
+{% macro date_user_combination(entity, lastModified, datetime_format = "short") %}
+    {% if lastModified == true %}
+        {{ entity.lastModified | format_datetime(datetime_format) }}
+    {% else %}
+        {{ entity.addedDate | format_datetime(datetime_format) }}
+    {% endif %}
+    {% if is_granted('show_history', entity) %}
+        {% if lastModified == true %}
+            {% set user = last_editing_user(entity) %}
+        {% else %}
+            {% set user = creating_user(entity) %}
+        {% endif %}
+
+        {% if user is not null %}
+            ({{ _self.user_icon_link(user) }})
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro entity_last_modified(entity, datetime_format = "short") %}
+    {{ _self.date_user_combination(entity, true, datetime_format) }}
+{% endmacro %}
+
+{% macro entity_created_at(entity, datetime_format = "short") %}
+    {{ _self.date_user_combination(entity, false, datetime_format) }}
+{% endmacro %}
+
+{% macro user_icon(user) %}
+    <img src="{{ avatar_helper.avatarSmURL(user) }}" class="avatar-xs" alt="User avatar" {{ stimulus_controller('elements/hoverpic') }} data-thumbnail="{{ avatar_helper.avatarMdURL(user) }}">
+{% endmacro %}
+
+{% macro user_icon_link(user) %}
+    {% if user.fullName is not empty %}
+        {{ _self.user_icon(user) }} <a href="{{ path('user_info', {"id": user.id}) }}" title="@{{ user.name }}">{{ user.fullName }}</a>
+    {% else %}
+        {{ _self.user_icon(user) }} <a href="{{ path('user_info', {"id": user.id}) }}" title="@{{ user.name }}">@{{ user.name }}</a>
+    {% endif %}
+{% endmacro  %}
+
+{% macro part_icon_link(part) %}
+    {% set preview_attach = part_preview_generator.tablePreviewAttachment(part) %}
+    {% if preview_attach %}
+        <img src="{{ attachment_thumbnail(preview_attach, 'thumbnail_xs') }}" class="entity-image-xs" alt="Part image"
+                {{ stimulus_controller('elements/hoverpic') }} data-thumbnail="{{ attachment_thumbnail(preview_attach) }}">
+    {% endif %}
+    <a href="{{ entity_url(part) }}">{{ part.name }}</a>
+{% endmacro %}
+
+{% macro entity_preview_sm(entity) %}
+    {# @var entity \App\Entity\Contracts\HasMasterAttachmentInterface #}
+    {% if entity.masterPictureAttachment and entity.masterPictureAttachment.picture and attachment_manager.fileExisting(entity.masterPictureAttachment) %}
+        <a href="{{ entity_url(entity.masterPictureAttachment, 'file_view')  }}" target="_blank" title="{{ entity.masterPictureAttachment.name}}">
+            <img src="{{ attachment_thumbnail(entity.masterPictureAttachment, 'thumbnail_sm') }}" style="height: 50px;">
+        </a>
+    {% endif %}
+{% endmacro %}
+
+{% macro entity_preview_xs(entity) %}
+    {# @var entity \App\Entity\Contracts\HasMasterAttachmentInterface #}
+    {% if entity.masterPictureAttachment and entity.masterPictureAttachment.picture and attachment_manager.fileExisting(entity.masterPictureAttachment) %}
+        <img src="{{ attachment_thumbnail(entity.masterPictureAttachment, 'thumbnail_xs') }}" class="entity-image-xs">
+    {% endif %}
+{% endmacro %}
+
+{% macro parameters_table(parameters) %}
+    <table class="table table-hover table-striped table-sm">
+        <thead>
+        <tr>
+            <th>{% trans %}specifications.property{% endtrans %}</th>
+            <th>{% trans %}specifications.value{% endtrans %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for param in parameters %}
+            <tr>
+                <td>{{ param.name }} {% if param.symbol is not empty %}<span class="latex" data-controller="common--latex">${{ param.symbol }}$</span>{% endif %}</td>
+                <td>{{ param.formattedValue }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endmacro parameters_table %}
+
+{% macro format_date_nullable(datetime) %}
+    {% if datetime is null %}
+        <i>{% trans %}datetime.never{% endtrans %}</i>
+    {% else %}
+        {{ datetime|format_datetime }}
+    {% endif %}
+{% endmacro %}

@@ -1,0 +1,19 @@
+{
+	"name": "Part-DB",
+	"short_name": "Part-DB",
+	"description": "Inventory managment for electronic components.",
+	"lang": "en",
+	"start_url": "/en/?source=pwa",
+	"display": "standalone",
+	"theme_color": "#ffffff",
+	"icons": [
+		{
+			"src": "/icon/android-chrome-192x192.png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "/icon/android-chrome-384x384.png",
+			"sizes": "384x384"
+		}
+	]
+}

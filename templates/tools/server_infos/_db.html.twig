@@ -1,0 +1,33 @@
+{% import "helper.twig" as helper %}
+<table class="table table-sm table-striped table-hover table-bordered">
+    <tbody>
+    <tr>
+        <td>Database type</td>
+        <td>{{ db_type }}</td>
+    </tr>
+    <tr>
+        <td>Database Server Version</td>
+        <td>{{ db_version }}</td>
+    </tr>
+    <tr>
+        <td>Database Size</td>
+        <td>{{ db_size != null ? db_size | format_bytes : 'Unknown' }}</td>
+    </tr>
+    <tr>
+        <td>Database Name</td>
+        <td>{{ db_name }}</td>
+    </tr>
+    <tr>
+        <td>Database User</td>
+        <td>{{ db_user }}</td>
+    </tr>
+    <tr>
+        <td>Natural sort method</td>
+        <td>{{ db_natsort_method }}</td>
+    </tr>
+    <tr>
+        <td>Slow natural sort allowed</td>
+        <td>{{ helper.boolean_badge(db_natsort_slow_allowed) }}</td>
+    </tr>
+    </tbody>
+</table>

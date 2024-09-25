@@ -1,0 +1,18 @@
+{% extends "admin/base_admin.html.twig" %}
+
+{% block card_title %}
+    <i class="fas fa-file-alt fa-fw"></i> {% trans %}attachment_type.caption{% endtrans %}
+{% endblock %}
+
+{% block additional_controls %}
+    {{ form_row(form.filetype_filter) }}
+    {{ form_row(form.alternative_names) }}
+{% endblock %}
+
+{% block edit_title %}
+    {% trans %}attachment_type.edit{% endtrans %}: {{ entity.name }}
+{% endblock %}
+
+{% block new_title %}
+    {% trans %}attachment_type.new{% endtrans %}
+{% endblock %}

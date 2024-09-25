@@ -1,0 +1,227 @@
+{% block pricedetail_widget %}
+    {% form_theme form.currency 'form/extended_bootstrap_layout.html.twig' %}
+    {% import 'components/collection_type.macro.html.twig' as collection %}
+
+    <tr>
+        <td>{{ form_widget(form.min_discount_quantity, {'attr': {'class': 'form-control-sm'}}) }} {{ form_errors(form.min_discount_quantity) }}</td>
+        <td>
+            <div class="input-group input-group-sm">
+                {{ form_widget(form.price) }}
+                {{ form_widget(form.currency, {'attr': {'class': 'form-control-sm'}}) }}
+            </div>
+            {{ form_errors(form.price) }}
+            {{ form_errors(form.currency) }}
+        </td>
+        <td>{{ form_widget(form.price_related_quantity, {'attr': {'class': 'form-control-sm'}}) }} {{ form_errors(form.price_related_quantity) }}</td>
+        <td>
+            <button type="button" class="btn btn-danger order_btn_delete btn-sm position-relative" title="{% trans %}orderdetail.delete{% endtrans %}"
+                    {{ collection.delete_btn() }}>
+                <i class="fas fa-trash-alt fa-fw"></i>
+                {{ collection.new_element_indicator(value) }}
+            </button>
+            {{ form_errors(form) }}
+        </td>
+    </tr>
+{% endblock %}
+
+{% block orderdetail_widget %}
+    {% import 'components/collection_type.macro.html.twig' as collection %}
+    <tr>
+        <td>
+            {{ form_row(form.supplier,  {'attr': {'class': 'form-control-sm form-control'}}) }}
+            {{ form_row(form.supplierpartnr, {'attr': {'class': 'form-control-sm'}}) }}
+            {{ form_row(form.supplier_product_url,  {'attr': {'class': 'form-control-sm'}}) }}
+            {{ form_widget(form.obsolete) }}
+        </td>
+        <td>
+            <div {{ collection.controller(form.pricedetails, 'pricedetails.edit.delete.confirm') }}>
+                <table class="table table-sm table-bordered" {{ collection.target() }}>
+                    <thead>
+                    <tr>
+                        <th>{% trans %}pricedetails.edit.min_qty{% endtrans %}</th>
+                        <th>{% trans %}pricedetails.edit.price{% endtrans %}</th>
+                        <th>{% trans %}pricedetails.edit.price_qty{% endtrans %}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for price in form.pricedetails %}
+                        {{ form_widget(price) }}
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <button type="button" class="btn btn-success" {{ collection.create_pricedetail_btn() }}>
+                    <i class="fas fa-plus-square fa-fw"></i>
+                    {% trans %}pricedetail.create{% endtrans %}
+                </button>
+            </div>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger order_btn_delete position-relative" {{ collection.delete_btn() }} title="{% trans %}orderdetail.delete{% endtrans %}">
+                <i class="fas fa-trash-alt fa-fw"></i>
+                {{ collection.new_element_indicator(value) }}
+            </button>
+            {{ form_errors(form) }}
+        </td>
+    </tr>
+{% endblock %}
+
+{% block parameter_widget %}
+    {% import 'components/collection_type.macro.html.twig' as collection %}
+    <tr {{ stimulus_controller('pages/parameters_autocomplete', {"url": path('typeahead_parameters', {"query": "__QUERY__", "type": form.vars["type"]})}) }}>
+        <td>{{ form_widget(form.name, {"attr": {"data-pages--parameters-autocomplete-target": "name"}}) }}{{ form_errors(form.name) }}</td>
+        <td {{ stimulus_controller('pages/latex_preview') }}>{{ form_widget(form.symbol, {"attr": {"data-pages--parameters-autocomplete-target": "symbol", "data-pages--latex-preview-target": "input"}}) }}{{ form_errors(form.symbol) }}<span {{ stimulus_target('pages/latex_preview', 'preview') }}></span></td>
+        <td>{{ form_widget(form.value_min) }}{{ form_errors(form.value_min) }}</td>
+        <td>{{ form_widget(form.value_typical) }}{{ form_errors(form.value_typical) }}</td>
+        <td>{{ form_widget(form.value_max) }}{{ form_errors(form.value_max) }}</td>
+        <td {{ stimulus_controller('pages/latex_preview') }}>{{ form_widget(form.unit, {"attr": {"data-pages--parameters-autocomplete-target": "unit", "data-pages--latex-preview-target": "input"}}) }}{{ form_errors(form.unit) }}<span {{ stimulus_target('pages/latex_preview', 'preview') }}></span></td>
+        <td>{{ form_widget(form.value_text) }}{{ form_errors(form.value_text) }}</td>
+        <td>{{ form_widget(form.group) }}{{ form_errors(form.group) }}</td>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm order_btn_delete position-relative {% if form.parent.vars.allow_delete is defined and  not form.parent.vars.allow_delete %}disabled{% endif %}"
+                    {{ collection.delete_btn() }} title="{% trans %}orderdetail.delete{% endtrans %}">
+                <i class="fas fa-trash-alt fa-fw"></i>
+                {{ collection.new_element_indicator(value) }}
+            </button>
+            {{ form_errors(form) }}
+        </td>
+    </tr>
+{% endblock %}
+
+{% block part_lot_widget %}
+    {% import 'components/collection_type.macro.html.twig' as collection %}
+    <tr>
+        <td>
+            {{ form_row(form.description) }}
+            {{ form_row(form.storage_location) }}
+            {{ form_row(form.amount) }}
+            {{ form_row(form.instock_unknown) }}
+            {{ form_row(form.needs_refill) }}
+            {{ form_row(form.expiration_date) }}
+
+            {% set id = 'collapse_' ~ random() %}
+
+            <a class="btn btn-link offset-sm-3 btn-sm" data-bs-toggle="collapse" href="#{{ id }}" role="button" aria-expanded="false" aria-controls="{{ id }}">
+                {% trans %}part_lot.edit.advanced{% endtrans %}
+            </a>
+            <div class="collapse" id="{{ id }}">
+                {{ form_row(form.comment) }}
+                {{ form_row(form.owner) }}
+                {{ form_row(form.vendor_barcode) }}
+            </div>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger lot_btn_delete position-relative" {{ collection.delete_btn() }}>
+                <i class="fas fa-trash-alt fa-fw"></i>
+                {% trans %}part_lot.delete{% endtrans %}
+                {{ collection.new_element_indicator(value) }}
+            </button>
+            {{ form_errors(form) }}
+        </td>
+    </tr>
+{% endblock %}
+
+{% block attachment_widget %}
+    {% import 'components/collection_type.macro.html.twig' as collection %}
+
+    <tr {{ stimulus_controller('elements/attachmenttype_change') }}>
+        <td>
+            {{ form_row(form.name) }}
+            {{ form_row(form.attachment_type) }}
+            {{ form_row(form.secureFile) }}
+            {{ form_row(form.showInTable) }}
+            {{ form_row(form.url) }}
+            {{ form_row(form.downloadURL) }}
+
+            <div class="mb-2 row">
+                {{ form_label(form.file) }}
+                <div class="col-sm-9">
+                    {{ form_widget(form.file) }}
+                    {{ form_errors(form.file) }}
+                    <small class="text-muted">{% trans %}attachment.max_file_size{% endtrans %}: {{ max_upload_size | format_bytes }}</small>
+                </div>
+            </div>
+
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger lot_btn_delete position-relative" {{ collection.delete_btn() }}>
+                <i class="fas fa-trash-alt fa-fw"></i>
+                {% trans %}attachment.delete{% endtrans %}
+                {{ collection.new_element_indicator(value) }}
+            </button>
+
+            {% set attach = form.vars.value %}
+
+            {% if attach is not null %}
+                {% if attachment_manager.fileExisting(attach) %}
+                    {% if not attach.external %}
+                        <br><br>
+                        <h6>
+                        <span class="badge bg-primary">
+                            <i class="fas fa-fw {{ ext_to_fa_icon(attach.extension) }}"></i> {{ attach.filename }}
+                        </span>
+                            <br>
+                            <span class="badge bg-secondary">
+                            <i class="fas fa-hdd fa-fw"></i> {{ attachment_manager.humanFileSize(attach) }}
+                        </span>
+                        </h6>
+                    {% else %}
+                        <br><br>
+                        <h6>
+                        <span class="badge bg-primary">
+                            <i class="fas fa-fw fa-globe"></i> {% trans %}attachment.external{% endtrans %}
+                        </span>
+                        </h6>
+                    {% endif %}
+
+                    {% if attach.secure %}
+                        <h6>
+                           <span class="badge bg-success">
+                                <i class="fas fa-fw fa-shield-alt"></i> {% trans %}attachment.secure{% endtrans %}
+                           </span>
+                        </h6>
+                    {% endif %}
+
+                    {% if attach.secure and not is_granted('show_private', attach) %}
+                        {# Leave blank #}
+                    {% elseif attach.picture %}
+                        <a href="{{ entity_url(attach, 'file_view') }}" rel="noopener" target="_blank" data-turbo="false">
+                            <img class="img-fluid img-thumbnail thumbnail-sm" src="{{ attachment_thumbnail(attach, 'thumbnail_md') }}" alt="{% trans %}attachment.preview.alt{% endtrans %}" />
+                        </a>
+                    {% else %}
+                        <a href="{{ entity_url(attach, 'file_view') }}" rel="noopener" target="_blank" data-turbo="false" class="link-external">{% trans %}attachment.view{% endtrans %}</a>
+                    {% endif %}
+                {% else %}
+                    <br><br>
+                    <h6>
+                    <span class="badge bg-warning">
+                        <i class="fas fa-exclamation-circle fa-fw"></i> {% trans %}attachment.file_not_found{% endtrans %}
+                    </span>
+                    </h6>
+
+                {% endif %}
+            {% endif %}
+
+        </td>
+    </tr>
+{% endblock %}
+
+{% block part_association_widget %}
+    {% import 'components/collection_type.macro.html.twig' as collection %}
+    <tr>
+        <td>
+            <div {{ stimulus_controller('pages/association_edit_type_select') }}>
+                {{ form_widget(form) }}
+            </div>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger lot_btn_delete position-relative" {{ collection.delete_btn() }}>
+                <i class="fas fa-trash-alt fa-fw"></i>
+                {% trans %}part_lot.delete{% endtrans %}
+                {{ collection.new_element_indicator(value) }}
+            </button>
+            {{ form_errors(form) }}
+        </td>
+    </tr>
+{% endblock %}
