@@ -102,6 +102,17 @@ class StatisticsHelper
     }
 
     /**
+     * Returns the price of all parts combined. Only the parts with price tags are taken into account.
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function getTotalValueOfParts(): string
+    {
+        return $this->part_repo->getTotalValueOfParts();
+    }
+
+    /**
      * Returns the number of datastructures for the given type.
      */
     public function getDataStructuresCount(string $type): int

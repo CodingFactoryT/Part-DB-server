@@ -49,3 +49,4 @@ phpstan.neon
 ###< phpstan/phpstan ###
 
 toBeTranslated.txt
+/data/

@@ -24,6 +24,7 @@ namespace App\Repository;
 
 use App\Entity\Parts\Part;
 use App\Entity\Parts\PartLot;
+use App\Entity\UserSystem\User;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
@@ -72,6 +73,26 @@ class PartRepository extends NamedDBElementRepository
     }
 
     /**
+     * Returns the price of all parts combined. Only the parts with price tags are taken into account.
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function getTotalValueOfParts(): string
+    {
+        //TODO: Get currency from system
+        //TODO: Get average of all price information of a part 
+        $qb = $this->createQueryBuilder('part');
+        $qb->select('SUM(pricedetail.price)')
+            ->innerJoin('part.orderdetails', 'orderdetail')
+            ->innerJoin('orderdetail.pricedetails', 'pricedetail');
+
+        $query = $qb->getQuery();
+
+        return (string) (($query->getSingleScalarResult() ?? -1) . "€");
+    }
+
+    /**
      * @return Part[]
      */
     public function autocompleteSearch(string $query, int $max_limits = 50): array
@@ -85,9 +106,9 @@ class PartRepository extends NamedDBElementRepository
             ->orWhere('part.description LIKE :query')
             ->orWhere('category.name LIKE :query')
             ->orWhere('footprint.name LIKE :query')
-            ;
+        ;
 
-        $qb->setParameter('query', '%'.$query.'%');
+        $qb->setParameter('query', '%' . $query . '%');
 
         $qb->setMaxResults($max_limits);
         $qb->orderBy('NATSORT(part.name)', 'ASC');
