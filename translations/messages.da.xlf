@@ -3144,6 +3144,12 @@ Underelementer vil blive flyttet opad.</target>
         <target>Komponenter med prisinformantion</target>
       </segment>
     </unit>
+    <unit id="aqkLIYr" name="statistics.total_value_of_parts">
+      <segment state="translated">
+        <source>statistics.total_value_of_parts</source>
+        <target>Samlet værdi af dele</target>
+      </segment>
+    </unit>
     <unit id="VX9aZ2j" name="statistics.categories_count">
       <notes>
         <note category="file-source" priority="1">Part-DB1\templates\Statistics\statistics.html.twig:65</note>

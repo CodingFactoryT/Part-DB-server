@@ -3114,6 +3114,12 @@
         <target>価格情報がある部品の数</target>
       </segment>
     </unit>
+    <unit id="aqkLIYr" name="statistics.total_value_of_parts">
+      <segment state="translated">
+        <source>statistics.total_value_of_parts</source>
+        <target>部品の合計金額</target>
+      </segment>
+    </unit>
     <unit id="VX9aZ2j" name="statistics.categories_count">
       <notes>
         <note category="file-source" priority="1">Part-DB1\templates\Statistics\statistics.html.twig:65</note>

@@ -3143,6 +3143,12 @@ Subelemente werden beim Löschen nach oben verschoben.</target>
         <target>Bauteile mit Preisinformationen</target>
       </segment>
     </unit>
+    <unit id="aqkLIYr" name="statistics.total_value_of_parts">
+      <segment state="translated">
+        <source>statistics.total_value_of_parts</source>
+        <target>Gesamtwert der Teile</target>
+      </segment>
+    </unit>
     <unit id="VX9aZ2j" name="statistics.categories_count">
       <notes>
         <note category="file-source" priority="1">Part-DB1\templates\Statistics\statistics.html.twig:65</note>
