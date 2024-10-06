@@ -24,7 +24,6 @@ namespace App\Repository;
 
 use App\Entity\Parts\Part;
 use App\Entity\Parts\PartLot;
-use App\Entity\UserSystem\User;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
@@ -82,14 +81,18 @@ class PartRepository extends NamedDBElementRepository
     {
         //TODO: Get currency from system
         //TODO: Get average of all price information of a part 
+
         $qb = $this->createQueryBuilder('part');
-        $qb->select('SUM(pricedetail.price)')
+
+        $qb->select('SUM((pricedetail.price/pricedetail.price_related_quantity) * partLot.amount)')
+            ->innerJoin('part.partLots', 'partLot')
             ->innerJoin('part.orderdetails', 'orderdetail')
             ->innerJoin('orderdetail.pricedetails', 'pricedetail');
 
         $query = $qb->getQuery();
 
-        return (string) (($query->getSingleScalarResult() ?? -1) . "€");
+        $roundedValue = round(($query->getSingleScalarResult() ?? -1), 2);
+        return (string) ($roundedValue . "€");
     }
 
     /**
