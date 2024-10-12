@@ -363,23 +363,9 @@ class Project extends AbstractStructuralDBElement
     {
         //TODO implement currency correctly
         //TODO also include subprojects in the calculation
-        //TODO set id dynamically
-
-        /*
-        SELECT SUM(part_price_per_unit*project_bom_entries.quantity)
-        FROM project_bom_entries
-        INNER JOIN (
-            SELECT parts.id AS original_part_id, pricedetails.price/pricedetails.price_related_quantity AS part_price_per_unit
-            FROM ((parts
-            INNER JOIN part_lots ON part_lots.id_part = parts.id)
-            INNER JOIN orderdetails ON orderdetails.part_id = parts.id)
-            INNER JOIN pricedetails ON orderdetails.id = pricedetails.orderdetails_id
-        ) ON project_bom_entries.id_part = original_part_id
-        WHERE project_bom_entries.id_device = $this->id
-        */
 
         $bom_entries = $this->bom_entries;
-        //Set master attachment is needed
+
         $totalCost = BigDecimal::of(0);
 
         foreach ($bom_entries as $bom_entry) {
