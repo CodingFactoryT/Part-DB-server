@@ -20,6 +20,12 @@
                     {% endif %}
                 </h3>
                 <h6 class="text-muted w-fit" title="{% trans %}description.label{% endtrans %}"><span>{{ project.description|format_markdown(true) }}</span></h6>
+                {% if project.totalCost %}
+                    <h6>
+                        <i class="fas fa-money-bill-alt fa-fw"></i>
+                        {{project.totalCost}}
+                    </h6>
+                {% endif %}
                 {% if project.buildPart %}
                     <h6>{% trans %}project.edit.associated_build_part{% endtrans %}:</h6>
                     <a href="{{ entity_url(project.buildPart) }}">{{ project.buildPart.name }}</a>

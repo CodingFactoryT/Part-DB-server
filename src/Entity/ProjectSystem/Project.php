@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace App\Entity\ProjectSystem;
 
+use Brick\Math\BigDecimal;
 use Doctrine\Common\Collections\Criteria;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
@@ -355,5 +356,40 @@ class Project extends AbstractStructuralDBElement
                     ->addViolation();
             }
         }
+    }
+
+    //gets the total value of the parts contained in this project
+    public function getTotalCost(): string
+    {
+        //TODO implement currency correctly
+        //TODO also include subprojects in the calculation
+        //TODO set id dynamically
+
+        /*
+        SELECT SUM(part_price_per_unit*project_bom_entries.quantity)
+        FROM project_bom_entries
+        INNER JOIN (
+            SELECT parts.id AS original_part_id, pricedetails.price/pricedetails.price_related_quantity AS part_price_per_unit
+            FROM ((parts
+            INNER JOIN part_lots ON part_lots.id_part = parts.id)
+            INNER JOIN orderdetails ON orderdetails.part_id = parts.id)
+            INNER JOIN pricedetails ON orderdetails.id = pricedetails.orderdetails_id
+        ) ON project_bom_entries.id_part = original_part_id
+        WHERE project_bom_entries.id_device = $this->id
+        */
+
+        $bom_entries = $this->bom_entries;
+        //Set master attachment is needed
+        $totalCost = BigDecimal::of(0);
+
+        foreach ($bom_entries as $bom_entry) {
+            $quantity = BigDecimal::of($bom_entry->getQuantity());
+
+            $pricePerUnit = $bom_entry->getPart()->getOrderdetails()[0]->getPricedetails()[0]->getPricePerUnit();
+            $totalCost = $totalCost->plus($quantity->multipliedBy($pricePerUnit));
+        }
+
+        $roundedValue = number_format(round($totalCost->toFloat(), 2), 2);
+        return (string) ("€" . $roundedValue);
     }
 }
