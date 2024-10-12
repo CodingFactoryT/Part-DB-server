@@ -91,7 +91,7 @@ class PartRepository extends NamedDBElementRepository
 
         $query = $qb->getQuery();
 
-        $roundedValue = round(($query->getSingleScalarResult() ?? -1), 2);
+        $roundedValue = number_format(round(($query->getSingleScalarResult() ?? -1), 2), 2);
         return (string) ($roundedValue . "€");
     }
 
