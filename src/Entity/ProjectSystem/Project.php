@@ -363,19 +363,41 @@ class Project extends AbstractStructuralDBElement
     {
         //TODO implement currency correctly
         //TODO also include subprojects in the calculation
+        //TODO prevent crash if one or more parts don´t have price information
 
         $bom_entries = $this->bom_entries;
-
         $totalCost = BigDecimal::of(0);
+        $entriesWithoutPrice = 0;
 
         foreach ($bom_entries as $bom_entry) {
             $quantity = BigDecimal::of($bom_entry->getQuantity());
+            $orderdetails = $bom_entry->getPart()->getOrderdetails()[0] ?? null;
 
-            $pricePerUnit = $bom_entry->getPart()->getOrderdetails()[0]->getPricedetails()[0]->getPricePerUnit();
+            // Check if orderdetails is null first, before accessing getPricedetails()
+            if ($orderdetails === null || ($pricedetails = $orderdetails->getPricedetails()[0] ?? null) === null) {
+                $entriesWithoutPrice++;
+                continue;
+            }
+
+            $pricePerUnit = $pricedetails->getPricePerUnit();
             $totalCost = $totalCost->plus($quantity->multipliedBy($pricePerUnit));
         }
 
         $roundedValue = number_format(round($totalCost->toFloat(), 2), 2);
+
+        $this->setEntriesWithoutPriceInformation($entriesWithoutPrice);
         return (string) ("€" . $roundedValue);
+    }
+
+    private int $entriesWithoutPriceInformation = 0;
+
+    public function getEntriesWithPriceInformation(): int
+    {
+        return $this->entriesWithoutPriceInformation;
+    }
+
+    public function setEntriesWithoutPriceInformation(int $entriesWithoutPriceInformation): void
+    {
+        $this->entriesWithoutPriceInformation = $entriesWithoutPriceInformation;
     }
 }

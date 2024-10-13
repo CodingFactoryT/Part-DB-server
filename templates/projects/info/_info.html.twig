@@ -24,6 +24,10 @@
                     <h6>
                         <i class="fas fa-money-bill-alt fa-fw"></i>
                         {{project.totalCost}}
+                        {% if project.entriesWithPriceInformation > 0 %}
+                            {{ " (" ~ project.entriesWithPriceInformation}}
+                            <i class="fa-brands fa-creative-commons-nc-eu"></i>{{ ")" }}
+                        {% endif %}
                     </h6>
                 {% endif %}
                 {% if project.buildPart %}
