@@ -1,3 +1,14 @@
+# Added features
+This fork adds the following features:
+<ul>
+  <li>The total value of all parts with price information is shown under statistics</li>
+  <li>The cost of a project is displayed in its info tab (currently only works if all parts have at least one price information)</li>
+</ul>
+
+<br>
+<br>
+<br>
+
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Part-DB/Part-DB-symfony/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Part-DB/Part-DB-symfony/?branch=master)
 ![PHPUnit Tests](https://github.com/Part-DB/Part-DB-symfony/workflows/PHPUnit%20Tests/badge.svg)
 ![Static analysis](https://github.com/Part-DB/Part-DB-symfony/workflows/Static%20analysis/badge.svg)
