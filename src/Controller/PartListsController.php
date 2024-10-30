@@ -333,7 +333,7 @@ class PartListsController extends AbstractController
         return $this->showListWithFilter($request, 'parts/lists/all_list.html.twig');
     }
 
-    #[Route(path: '/parts', name: 'parts_show_all_by_storage_location')]
+    #[Route(path: '/parts-by-storage-location', name: 'parts_show_all_by_storage_location')]
     public function showAllByStorageLocation(Request $request): Response
     {
         return $this->showListWithFilter($request, 'parts/lists/all_by_storage_location_list.html.twig');
