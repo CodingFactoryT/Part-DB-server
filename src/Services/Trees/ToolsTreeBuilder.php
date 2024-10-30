@@ -61,7 +61,7 @@ class ToolsTreeBuilder
      */
     public function getTree(): array
     {
-        $key = 'tree_tools_'.$this->keyGenerator->generateKey();
+        $key = 'tree_tools_' . $this->keyGenerator->generateKey();
 
         return $this->cache->get($key, function (ItemInterface $item) {
             //Invalidate tree, whenever group or the user changes
@@ -83,7 +83,7 @@ class ToolsTreeBuilder
             }
             if ($this->getSystemNodes() !== []) {
                 $tree[] = (new TreeViewNode($this->translator->trans('tree.tools.system'), null, $this->getSystemNodes()))
-                ->setIcon('fa-fw fa-treeview fa-solid fa-server');
+                    ->setIcon('fa-fw fa-treeview fa-solid fa-server');
             }
 
             return $tree;
@@ -236,6 +236,13 @@ class ToolsTreeBuilder
                 $this->translator->trans('tree.tools.show.all_parts'),
                 $this->urlGenerator->generate('parts_show_all')
             ))->setIcon('fa-fw fa-treeview fa-solid fa-globe');
+        }
+
+        if ($this->security->isGranted('@parts.read')) {
+            $show_nodes[] = (new TreeViewNode(
+                "Show all parts by storage location",
+                $this->urlGenerator->generate('parts_show_all_by_storage_location')
+            ))->setIcon('fa-fw fa-treeview fa-solid fa-cube');
         }
 
         if ($this->security->isGranted('@attachments.list_attachments')) {

@@ -1,0 +1,100 @@
+{% macro datatable(datatable, controller = 'elements/datatables/datatables', state_save_tag = null) %}
+    <div {{ stimulus_controller(controller, {"stateSaveTag": state_save_tag}) }} data-dt-settings='{{ datatable_settings(datatable)|escape('html_attr') }}' data-dt-url="{{ uri_without_host(app.request) }}">
+        <div {{ stimulus_target(controller, 'dt') }}>
+            <div class="card-body">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>{% trans %}part_list.loading.caption{% endtrans %}</h4>
+                        <h6>{% trans %}part_list.loading.message{% endtrans %}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro logDataTable(dt, state_save_tag = null) %}
+    {{ _self.datatable(dt, 'elements/datatables/log', state_save_tag) }}
+{% endmacro %}
+
+{% macro partsDatatableWithForm(datatable, state_save_tag = 'parts') %}
+    <form method="post" action="{{ path("table_action") }}"
+          {# The app.request.baseUrl here is important or it wont work behind a reverse proxy with subfolder #}
+            {# The following line is responsible for the whole rendering and fetching of all parts: #}
+            {{ stimulus_controller('elements/datatables/parts', {"stateSaveTag": state_save_tag}) }} data-dt-settings='{{ datatable_settings(datatable)|escape('html_attr') }}' data-dt-url="{{ uri_without_host(app.request) }}"
+            {#-------------------------------------------------------------------------------#}
+            {{ stimulus_action('elements/datatables/parts', 'confirmDeletionAtSubmit') }}  data-delete-title="{% trans %}part_list.action.delete-title{% endtrans %}"
+          data-delete-message="{% trans %}part_list.action.delete-message{% endtrans %}">
+        <input type="hidden" name="_token" value="{{ csrf_token('table_action') }}">
+
+        <input type="hidden" name="redirect_back" value="{{ uri_without_host(app.request) }}">
+
+        <input type="hidden" name="ids" {{ stimulus_target('elements/datatables/parts', 'selectIDs') }} value="">
+
+        <div class="d-none mb-2" {{ stimulus_target('elements/datatables/parts', 'selectPanel') }}>
+            {# <span id="select_count"></span> #}
+
+            <div class="input-group">
+                <button class="btn btn-outline-secondary" type="button" {{ stimulus_action('elements/datatables/parts', 'invertSelection')}}
+                        title="{% trans %}part_list.action.invert_selection{% endtrans %}" ><i class="fa-solid fa-arrow-right-arrow-left"></i></button>
+                <span class="input-group-text">
+                    <span class="badge bg-primary">{% trans with {'%count%': '<span ' ~ stimulus_target('elements/datatables/parts', 'selectCount') ~ '></span>'} %}part_list.action.part_count{% endtrans %}</span>
+                </span>
+
+                <select class="form-select" name="action" data-controller="elements--select" {{ stimulus_action('elements/datatables/parts', 'updateTargetPicker', 'change') }}
+                        title="{% trans %}part_list.action.action.title{% endtrans %}" required>
+                    <optgroup label="{% trans %}part_list.action.action.group.favorite{% endtrans %}">
+                        <option {% if not is_granted('@parts.change_favorite')  %}disabled{% endif %} value="favorite">{% trans %}part_list.action.action.favorite{% endtrans %}</option>
+                        <option {% if not is_granted('@parts.change_favorite') %}disabled{% endif %} value="unfavorite">{% trans %}part_list.action.action.unfavorite{% endtrans %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans %}part_list.action.action.group.needs_review{% endtrans %}">
+                        <option {% if not is_granted('@parts.edit')  %}disabled{% endif %} value="set_needs_review">{% trans %}part_list.action.action.set_needs_review{% endtrans %}</option>
+                        <option {% if not is_granted('@parts.edit') %}disabled{% endif %} value="unset_needs_review">{% trans %}part_list.action.action.unset_needs_review{% endtrans %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans %}part_list.action.action.group.change_field{% endtrans %}">
+                        <option {% if not is_granted('@parts.edit') %}disabled{% endif %} value="change_category" data-url="{{ path('select_category') }}">{% trans %}part_list.action.action.change_category{% endtrans %}</option>
+                        <option {% if not is_granted('@parts.edit') %}disabled{% endif %} value="change_footprint" data-url="{{ path('select_footprint') }}">{% trans %}part_list.action.action.change_footprint{% endtrans %}</option>
+                        <option {% if not is_granted('@parts.edit') %}disabled{% endif %} value="change_manufacturer" data-url="{{ path('select_manufacturer') }}">{% trans %}part_list.action.action.change_manufacturer{% endtrans %}</option>
+                        <option {% if not is_granted('@parts.edit') %}disabled{% endif %} value="change_unit" data-url="{{ path('select_measurement_unit') }}">{% trans %}part_list.action.action.change_unit{% endtrans %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans %}part_list.action.group.labels{% endtrans %}">
+                        <option {% if not is_granted('@labels.create_labels') %}disabled{% endif %} value="generate_label_lot" data-url="{{  path('select_label_profiles_lot')}}">{% trans %}part_list.action.projects.generate_label_lot{% endtrans %}</option>
+                        <option {% if not is_granted('@labels.create_labels') %}disabled{% endif %} value="generate_label" data-url="{{  path('select_label_profiles')}}">{% trans %}part_list.action.projects.generate_label{% endtrans %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans %}part_list.action.group.projects{% endtrans %}">
+                        <option {% if not is_granted('@projects.read') %}disabled{% endif %} value="add_to_project" data-url="{{  path('select_project')}}">{% trans %}part_list.action.projects.add_to_project{% endtrans %}</option>
+                    </optgroup>
+
+                    <optgroup label="{% trans %}part_list.action.action.delete{% endtrans %}">
+                        <option {% if not is_granted('@parts.delete') %}disabled{% endif %} value="delete">{% trans %}part_list.action.action.delete{% endtrans %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans %}part_list.action.action.export{% endtrans %}">
+                        <option {% if not is_granted('@parts.read') %}disabled{% endif %} value="export_json" data-url="{{  path('select_export_level')}}" data-turbo="false">{% trans %}part_list.action.export_json{% endtrans %}</option>
+                        <option {% if not is_granted('@parts.read') %}disabled{% endif %} value="export_csv" data-url="{{  path('select_export_level')}}" data-turbo="false">{% trans %}part_list.action.export_csv{% endtrans %}</option>
+                        <option {% if not is_granted('@parts.read') %}disabled{% endif %} value="export_yaml" data-url="{{  path('select_export_level')}}" data-turbo="false">{% trans %}part_list.action.export_yaml{% endtrans %}</option>
+                        <option {% if not is_granted('@parts.read') %}disabled{% endif %} value="export_xml" data-url="{{  path('select_export_level')}}" data-turbo="false">{% trans %}part_list.action.export_xml{% endtrans %}</option>
+                    </optgroup>
+                </select>
+
+                <select class="form-select d-none" data-controller="elements--structural-entity-select" name="target" {{ stimulus_target('elements/datatables/parts', 'selectTargetPicker') }}>
+                    {# This is left empty, as this will be filled by Javascript #}
+                </select>
+
+                <button type="submit" class="btn btn-primary">{% trans %}part_list.action.submit{% endtrans %}</button>
+            </div>
+        </div>
+
+        {#"Loading" message: If not present, the parts won't show up #}
+        <div {{ stimulus_target('elements/datatables/parts', 'dt') }}>
+            <div class="card-body">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>{% trans %}part_list.loading.caption{% endtrans %}</h4>
+                        <h6>{% trans %}part_list.loading.message{% endtrans %}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endmacro %}

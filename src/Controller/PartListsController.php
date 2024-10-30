@@ -120,12 +120,12 @@ class PartListsController extends AbstractController
         $formRequest = clone $request;
         $formRequest->setMethod('GET');
         $filter = new PartFilter($this->nodesListBuilder);
-        if($filter_changer !== null){
+        if ($filter_changer !== null) {
             $filter_changer($filter);
         }
 
         $filterForm = $this->createForm(PartFilterType::class, $filter, ['method' => 'GET']);
-        if($form_changer !== null) {
+        if ($form_changer !== null) {
             $form_changer($filterForm);
         }
 
@@ -147,7 +147,7 @@ class PartListsController extends AbstractController
                     }
                 }
             } catch (InvalidRegexException $exception) {
-                $errors = $this->translator->trans('part.table.invalid_regex').': '.$exception->getReason();
+                $errors = $this->translator->trans('part.table.invalid_regex') . ': ' . $exception->getReason();
                 return ErrorDataTable::errorTable($this->dataTableFactory, $request, $errors);
             }
         }
@@ -163,13 +163,16 @@ class PartListsController extends AbstractController
     {
         $this->denyAccessUnlessGranted('@categories.read');
 
-        return $this->showListWithFilter($request,
+        return $this->showListWithFilter(
+            $request,
             'parts/lists/category_list.html.twig',
             function (PartFilter $filter) use ($category) {
                 $filter->category->setOperator('INCLUDING_CHILDREN')->setValue($category);
-            }, function (FormInterface $filterForm) {
+            },
+            function (FormInterface $filterForm) {
                 $this->disableFormFieldAfterCreation($filterForm->get('category')->get('value'));
-            }, [
+            },
+            [
                 'entity' => $category,
                 'repo' => $this->entityManager->getRepository(Category::class),
             ]
@@ -181,13 +184,16 @@ class PartListsController extends AbstractController
     {
         $this->denyAccessUnlessGranted('@footprints.read');
 
-        return $this->showListWithFilter($request,
+        return $this->showListWithFilter(
+            $request,
             'parts/lists/footprint_list.html.twig',
             function (PartFilter $filter) use ($footprint) {
                 $filter->footprint->setOperator('INCLUDING_CHILDREN')->setValue($footprint);
-            }, function (FormInterface $filterForm) {
+            },
+            function (FormInterface $filterForm) {
                 $this->disableFormFieldAfterCreation($filterForm->get('footprint')->get('value'));
-            }, [
+            },
+            [
                 'entity' => $footprint,
                 'repo' => $this->entityManager->getRepository(Footprint::class),
             ]
@@ -199,13 +205,16 @@ class PartListsController extends AbstractController
     {
         $this->denyAccessUnlessGranted('@manufacturers.read');
 
-        return $this->showListWithFilter($request,
+        return $this->showListWithFilter(
+            $request,
             'parts/lists/manufacturer_list.html.twig',
             function (PartFilter $filter) use ($manufacturer) {
                 $filter->manufacturer->setOperator('INCLUDING_CHILDREN')->setValue($manufacturer);
-            }, function (FormInterface $filterForm) {
+            },
+            function (FormInterface $filterForm) {
                 $this->disableFormFieldAfterCreation($filterForm->get('manufacturer')->get('value'));
-            }, [
+            },
+            [
                 'entity' => $manufacturer,
                 'repo' => $this->entityManager->getRepository(Manufacturer::class),
             ]
@@ -217,13 +226,16 @@ class PartListsController extends AbstractController
     {
         $this->denyAccessUnlessGranted('@storelocations.read');
 
-        return $this->showListWithFilter($request,
+        return $this->showListWithFilter(
+            $request,
             'parts/lists/store_location_list.html.twig',
             function (PartFilter $filter) use ($storelocation) {
                 $filter->storelocation->setOperator('INCLUDING_CHILDREN')->setValue($storelocation);
-            }, function (FormInterface $filterForm) {
+            },
+            function (FormInterface $filterForm) {
                 $this->disableFormFieldAfterCreation($filterForm->get('storelocation')->get('value'));
-            }, [
+            },
+            [
                 'entity' => $storelocation,
                 'repo' => $this->entityManager->getRepository(StorageLocation::class),
             ]
@@ -235,13 +247,16 @@ class PartListsController extends AbstractController
     {
         $this->denyAccessUnlessGranted('@suppliers.read');
 
-        return $this->showListWithFilter($request,
+        return $this->showListWithFilter(
+            $request,
             'parts/lists/supplier_list.html.twig',
             function (PartFilter $filter) use ($supplier) {
                 $filter->supplier->setOperator('INCLUDING_CHILDREN')->setValue($supplier);
-            }, function (FormInterface $filterForm) {
+            },
+            function (FormInterface $filterForm) {
                 $this->disableFormFieldAfterCreation($filterForm->get('supplier')->get('value'));
-            }, [
+            },
+            [
                 'entity' => $supplier,
                 'repo' => $this->entityManager->getRepository(Supplier::class),
             ]
@@ -253,13 +268,16 @@ class PartListsController extends AbstractController
     {
         $tag = trim($tag);
 
-        return $this->showListWithFilter($request,
+        return $this->showListWithFilter(
+            $request,
             'parts/lists/tags_list.html.twig',
             function (PartFilter $filter) use ($tag) {
                 $filter->tags->setOperator('ANY')->setValue($tag);
-            }, function (FormInterface $filterForm) {
+            },
+            function (FormInterface $filterForm) {
                 $this->disableFormFieldAfterCreation($filterForm->get('tags')->get('value'));
-            }, [
+            },
+            [
                 'tag' => $tag,
             ]
         );
@@ -294,7 +312,8 @@ class PartListsController extends AbstractController
     {
         $searchFilter = $this->searchRequestToFilter($request);
 
-        return $this->showListWithFilter($request,
+        return $this->showListWithFilter(
+            $request,
             'parts/lists/search_list.html.twig',
             null,
             null,
@@ -311,6 +330,12 @@ class PartListsController extends AbstractController
     #[Route(path: '/parts', name: 'parts_show_all')]
     public function showAll(Request $request): Response
     {
-        return $this->showListWithFilter($request,'parts/lists/all_list.html.twig');
+        return $this->showListWithFilter($request, 'parts/lists/all_list.html.twig');
+    }
+
+    #[Route(path: '/parts', name: 'parts_show_all_by_storage_location')]
+    public function showAllByStorageLocation(Request $request): Response
+    {
+        return $this->showListWithFilter($request, 'parts/lists/all_by_storage_location_list.html.twig');
     }
 }

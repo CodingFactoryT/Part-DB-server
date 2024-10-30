@@ -1,0 +1,31 @@
+{% extends "base.html.twig" %}
+
+{% block  title %}
+    All parts grouped by storage location
+{% endblock %}
+
+{% block content %}
+
+    <div class="accordion mb-3" id="listAccordion">
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <button class="accordion-button collapsed py-2" data-bs-toggle="collapse" data-bs-target="#searchInfo" disabled>
+                    <i class="fa-solid fa-globe fa-fw"></i>
+                    All parts grouped by storage location
+                </button>
+            </div>
+            <div id="searchInfo" class="accordion-collapse collapse" data-bs-parent="#listAccordion">
+                <div class="accordion-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% import "components/datatables_by_storage_location.macro.html.twig" as datatables %}
+
+    {{dump(datatable)}}
+    {{ datatables.partsDatatableWithForm(datatable) }}
+
+
+{% endblock %}
