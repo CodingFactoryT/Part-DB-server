@@ -138,23 +138,25 @@ final class PartsDataTable implements DataTableTypeInterface
             ->add('storelocation', TextColumn::class, [
                 'label' => $this->translator->trans('part.table.storeLocations'),
                 'orderField' => 'NATSORT(_storelocations.name)',
-                'render' => fn ($value, Part $context) => $this->partDataTableHelper->renderStorageLocations($context),
+                'render' => fn($value, Part $context) => $this->partDataTableHelper->renderStorageLocations($context),
             ], alias: 'storage_location')
 
             ->add('amount', TextColumn::class, [
                 'label' => $this->translator->trans('part.table.amount'),
-                'render' => fn ($value, Part $context) => $this->partDataTableHelper->renderAmount($context),
+                'render' => fn($value, Part $context) => $this->partDataTableHelper->renderAmount($context),
                 'orderField' => 'amountSum'
             ])
             ->add('minamount', TextColumn::class, [
                 'label' => $this->translator->trans('part.table.minamount'),
-                'render' => fn($value, Part $context): string => htmlspecialchars($this->amountFormatter->format($value,
-                    $context->getPartUnit())),
+                'render' => fn($value, Part $context): string => htmlspecialchars($this->amountFormatter->format(
+                    $value,
+                    $context->getPartUnit()
+                )),
             ])
             ->add('partUnit', TextColumn::class, [
                 'label' => $this->translator->trans('part.table.partUnit'),
                 'orderField' => 'NATSORT(_partUnit.name)',
-                'render' => function($value, Part $context): string {
+                'render' => function ($value, Part $context): string {
                     $partUnit = $context->getPartUnit();
                     if ($partUnit === null) {
                         return '';
@@ -163,7 +165,7 @@ final class PartsDataTable implements DataTableTypeInterface
                     $tmp = htmlspecialchars($partUnit->getName());
 
                     if ($partUnit->getUnit()) {
-                        $tmp .= ' ('.htmlspecialchars($partUnit->getUnit()).')';
+                        $tmp .= ' (' . htmlspecialchars($partUnit->getUnit()) . ')';
                     }
                     return $tmp;
                 }
@@ -226,7 +228,7 @@ final class PartsDataTable implements DataTableTypeInterface
                     }
 
                     if (count($projects) > $max) {
-                        $tmp .= ", + ".(count($projects) - $max);
+                        $tmp .= ", + " . (count($projects) - $max);
                     }
 
                     return $tmp;
@@ -243,8 +245,11 @@ final class PartsDataTable implements DataTableTypeInterface
             ]);
 
         //Apply the user configured order and visibility and add the columns to the table
-        $this->csh->applyVisibilityAndConfigureColumns($dataTable, $this->visible_columns,
-            "TABLE_PARTS_DEFAULT_COLUMNS");
+        $this->csh->applyVisibilityAndConfigureColumns(
+            $dataTable,
+            $this->visible_columns,
+            "TABLE_PARTS_DEFAULT_COLUMNS"
+        );
 
         $dataTable->addOrderBy('name')
             ->createAdapter(TwoStepORMAdapter::class, [
@@ -323,22 +328,22 @@ final class PartsDataTable implements DataTableTypeInterface
             ->leftJoin('part.partUnit', 'partUnit')
             ->leftJoin('part.parameters', 'parameters')
             ->where('part.id IN (:ids)')
-            ->setParameter('ids', $ids)
+            ->setParameter('ids', $ids);
 
-            //We have to group by all elements, or only the first sub elements of an association is fetched! (caused issue #190)
-            ->addGroupBy('part')
-            ->addGroupBy('partLots')
-            ->addGroupBy('category')
-            ->addGroupBy('master_picture_attachment')
-            ->addGroupBy('storelocations')
-            ->addGroupBy('footprint')
-            ->addGroupBy('footprint_attachment')
-            ->addGroupBy('manufacturer')
-            ->addGroupBy('orderdetails')
-            ->addGroupBy('suppliers')
-            ->addGroupBy('attachments')
-            ->addGroupBy('partUnit')
-            ->addGroupBy('parameters');
+        //We have to group by all elements, or only the first sub elements of an association is fetched! (caused issue #190)
+        /* ->addGroupBy('part')
+        ->addGroupBy('partLots')
+        ->addGroupBy('category')
+        ->addGroupBy('master_picture_attachment')
+        ->addGroupBy('storelocations')
+        ->addGroupBy('footprint')
+        ->addGroupBy('footprint_attachment')
+        ->addGroupBy('manufacturer')
+        ->addGroupBy('orderdetails')
+        ->addGroupBy('suppliers')
+        ->addGroupBy('attachments')
+        ->addGroupBy('partUnit')
+        ->addGroupBy('parameters'); */
 
         //Get the results in the same order as the IDs were passed
         FieldHelper::addOrderByFieldParam($builder, 'part.id', 'ids');
@@ -362,7 +367,7 @@ final class PartsDataTable implements DataTableTypeInterface
             $builder->addSelect(
                 '(
                     SELECT COALESCE(SUM(partLot.amount), 0.0)
-                    FROM '.PartLot::class.' partLot
+                    FROM ' . PartLot::class . ' partLot
                     WHERE partLot.part = part.id
                     AND partLot.instock_unknown = false
                     AND (partLot.expiration_date IS NULL OR partLot.expiration_date > CURRENT_DATE())
