@@ -3282,7 +3282,7 @@ data-urls@^2.0.0:
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
 
-datatables.net-bs5@^2, datatables.net-bs5@^2.0.0:
+datatables.net-bs5@>=1.11.0, datatables.net-bs5@^2, datatables.net-bs5@^2.1.8:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/datatables.net-bs5/-/datatables.net-bs5-2.1.8.tgz#860717c4ee85ecb84812ba9a73fb1204aa2a68b6"
   integrity sha512-YlGws8eI3iw/1AmKJH18+YMzm/UgGb6o9s14KAC24QT1/8anolm8GnVAgGcwUcvHm3hn1i8A5QXqgbqeMRINeg==
@@ -3358,7 +3358,16 @@ datatables.net-responsive@3.0.3:
     datatables.net "^2"
     jquery ">=1.7"
 
-datatables.net-rowgroup@^1.5.0:
+datatables.net-rowgroup-bs5@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/datatables.net-rowgroup-bs5/-/datatables.net-rowgroup-bs5-1.5.0.tgz#57b5e43cceb4795be70dbadd2519b2f4522fa417"
+  integrity sha512-Fzk9aXlS1CAe+UfKa62QI6AqlX9fazMC0rOnBIH/38c6QqggikjGTzUOSn8bgs6MQrgbSS2bYlp9kHH4L0hSvA==
+  dependencies:
+    datatables.net-bs5 ">=1.11.0"
+    datatables.net-rowgroup "1.5.0"
+    jquery ">=1.7"
+
+datatables.net-rowgroup@1.5.0, datatables.net-rowgroup@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/datatables.net-rowgroup/-/datatables.net-rowgroup-1.5.0.tgz#644b5fd7f7fc6fdb1bc4e42dfa0a9203740f31ca"
   integrity sha512-V/CLJu7rMjxwfhZAv59emZOPw58cwnYmd8NXTTJSnqBDgOZsaC9mtVo0ejBpdqvNw5WmMPy3AJceH+ay6JQ3hA==

@@ -24,7 +24,7 @@ import "datatables.net-bs5/css/dataTables.bootstrap5.css";
 import "datatables.net-buttons-bs5/css/buttons.bootstrap5.css";
 import "datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.css";
 import "datatables.net-responsive-bs5/css/responsive.bootstrap5.css";
-
+import "datatables.net-rowgroup-bs5/css/rowgroup.bootstrap5.css";
 //Use our own styles for the select extension which fit the bootstrap theme better
 //import 'datatables.net-select-bs5/css/select.bootstrap5.css';
 import "../../../css/components/datatables_select_bs5.css";
@@ -35,7 +35,7 @@ import "datatables.net-buttons-bs5";
 import "datatables.net-buttons/js/buttons.colVis.js";
 import "datatables.net-fixedheader-bs5";
 import "datatables.net-colreorder-bs5";
-import "datatables.net-rowgroup";
+import "datatables.net-rowgroup-bs5";
 import "datatables.net-responsive-bs5";
 import "../../../js/lib/datatables";
 
