@@ -103,34 +103,33 @@ export default class extends Controller {
 		//Add url info, as the one available in the history is not enough, as Turbo may have not changed it yet
 		settings.url = this.element.dataset.dtUrl;
 
+		//set if the parts should be grouped by storage location or displayed normally
+		const GROUPING_ENABLED = window.location.pathname.endsWith("/parts-by-storage-location");
+
 		//Add initial_order info to the settings, so that the order on the initial page load is the one saved in the state
 		const saved_state = this.stateLoadCallback();
 		if (saved_state !== null) {
 			const raw_order = saved_state.order;
 
 			settings.initial_order = raw_order.map((order) => {
+				if (GROUPING_ENABLED) {
+					//set ordering column to "storelocation (=5)" with "asc" as the direction
+					return {
+						column: 5,
+						dir: "asc",
+					};
+				}
+
 				return {
-					column: 5,
-					dir: "asc",
+					column: order[0],
+					dir: order[1],
 				};
 			});
 		}
 
 		let options = {
 			colReorder: true,
-			rowGroup: {
-				startRender: function (rows, group) {
-					const columnCount = rows.table().columns().count();
 
-					return $('<tr class="custom-group-header"/>')
-						.append('<td colspan="' + columnCount + '" style="background-color: #121416; color: #fff; font-weight: bold;">' + group + "</td>")
-						.get(0);
-				},
-				endRender: null,
-				dataSrc: "storelocation",
-			},
-			order: [[5, "asc"]],
-			ordering: false,
 			fixedHeader: {
 				header: $(window).width() >= 768, //Only enable fixedHeaders on devices with big screen. Fixes scrolling issues on smartphones.
 				headerOffset: $("#navbar").outerHeight(),
@@ -149,6 +148,25 @@ export default class extends Controller {
 			stateSaveCallback: this.stateSaveCallback.bind(this),
 			stateLoadCallback: this.stateLoadCallback.bind(this),
 		};
+
+		let groupingOptions = {
+			rowGroup: {
+				startRender: function (rows, group) {
+					const columnCount = rows.table().columns().count();
+
+					return $('<tr class="custom-group-header"/>')
+						.append('<td colspan="' + columnCount + '" style="background-color: #121416; color: #fff; font-weight: bold;">' + group + "</td>")
+						.get(0);
+				},
+				endRender: null,
+				dataSrc: "storelocation",
+			},
+			ordering: false,
+		};
+
+		if (GROUPING_ENABLED) {
+			options = { ...options, ...groupingOptions };
+		}
 
 		if (this.isSelectable()) {
 			options.select = {
