@@ -50,3 +50,6 @@ phpstan.neon
 
 toBeTranslated.txt
 localDockerDeploy.bat
+/.env.docker
+/.env.docker.php
+/.env.*.docker
