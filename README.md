@@ -3,6 +3,7 @@ This fork adds the following features:
 <ul>
   <li>The total value of all parts with price information is shown under statistics</li>
   <li>The cost of a project is displayed in its info tab (currently only works if all parts have at least one price information)</li>
+  <li>The parts can now be grouped by storage location</li>
 </ul>
 
 <br>
