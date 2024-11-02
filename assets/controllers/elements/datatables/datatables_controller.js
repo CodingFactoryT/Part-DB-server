@@ -110,17 +110,27 @@ export default class extends Controller {
 
 			settings.initial_order = raw_order.map((order) => {
 				return {
-					column: order[0],
-					dir: order[1],
+					column: 5,
+					dir: "asc",
 				};
 			});
 		}
 
 		let options = {
 			colReorder: true,
-			/* rowGroup: {
+			rowGroup: {
+				startRender: function (rows, group) {
+					const columnCount = rows.table().columns().count();
+
+					return $('<tr class="custom-group-header"/>')
+						.append('<td colspan="' + columnCount + '" style="background-color: #121416; color: #fff; font-weight: bold;">' + group + "</td>")
+						.get(0);
+				},
+				endRender: null,
 				dataSrc: "storelocation",
-			}, */
+			},
+			order: [[5, "asc"]],
+			ordering: false,
 			fixedHeader: {
 				header: $(window).width() >= 768, //Only enable fixedHeaders on devices with big screen. Fixes scrolling issues on smartphones.
 				headerOffset: $("#navbar").outerHeight(),

@@ -137,7 +137,7 @@ final class PartsDataTable implements DataTableTypeInterface
             ])
             ->add('storelocation', TextColumn::class, [
                 'label' => $this->translator->trans('part.table.storeLocations'),
-                'orderField' => 'NATSORT(_storelocations.name)',
+                'orderField' => 'NATSORT(_storelocations)',
                 'render' => fn($value, Part $context) => $this->partDataTableHelper->renderStorageLocations($context),
             ], alias: 'storage_location')
 
@@ -283,10 +283,10 @@ final class PartsDataTable implements DataTableTypeInterface
         $builder
             ->select('part.id')
             ->addSelect('part.minamount AS HIDDEN minamount')
-            ->from(Part::class, 'part')
+            ->from(Part::class, 'part');
 
-            //The other group by fields, are dynamically added by the addJoins method
-            ->addGroupBy('part');
+        //The other group by fields, are dynamically added by the addJoins method
+        //->addGroupBy('part');
     }
 
     private function getDetailQuery(QueryBuilder $builder, array $filter_results): void
