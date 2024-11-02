@@ -118,9 +118,9 @@ export default class extends Controller {
 
 		let options = {
 			colReorder: true,
-			rowGroup: {
+			/* rowGroup: {
 				dataSrc: "storelocation",
-			},
+			}, */
 			fixedHeader: {
 				header: $(window).width() >= 768, //Only enable fixedHeaders on devices with big screen. Fixes scrolling issues on smartphones.
 				headerOffset: $("#navbar").outerHeight(),
