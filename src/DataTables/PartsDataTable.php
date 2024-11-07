@@ -283,10 +283,10 @@ final class PartsDataTable implements DataTableTypeInterface
         $builder
             ->select('part.id')
             ->addSelect('part.minamount AS HIDDEN minamount')
-            ->from(Part::class, 'part');
+            ->from(Part::class, 'part')
 
-        //The other group by fields, are dynamically added by the addJoins method
-        //->addGroupBy('part');
+            //The other group by fields, are dynamically added by the addJoins method
+            ->addGroupBy('part');
     }
 
     private function getDetailQuery(QueryBuilder $builder, array $filter_results): void
@@ -328,22 +328,22 @@ final class PartsDataTable implements DataTableTypeInterface
             ->leftJoin('part.partUnit', 'partUnit')
             ->leftJoin('part.parameters', 'parameters')
             ->where('part.id IN (:ids)')
-            ->setParameter('ids', $ids);
+            ->setParameter('ids', $ids)
 
-        //We have to group by all elements, or only the first sub elements of an association is fetched! (caused issue #190)
-        /* ->addGroupBy('part')
-        ->addGroupBy('partLots')
-        ->addGroupBy('category')
-        ->addGroupBy('master_picture_attachment')
-        ->addGroupBy('storelocations')
-        ->addGroupBy('footprint')
-        ->addGroupBy('footprint_attachment')
-        ->addGroupBy('manufacturer')
-        ->addGroupBy('orderdetails')
-        ->addGroupBy('suppliers')
-        ->addGroupBy('attachments')
-        ->addGroupBy('partUnit')
-        ->addGroupBy('parameters'); */
+            //We have to group by all elements, or only the first sub elements of an association is fetched! (caused issue #190)
+            ->addGroupBy('part')
+            ->addGroupBy('partLots')
+            ->addGroupBy('category')
+            ->addGroupBy('master_picture_attachment')
+            ->addGroupBy('storelocations')
+            ->addGroupBy('footprint')
+            ->addGroupBy('footprint_attachment')
+            ->addGroupBy('manufacturer')
+            ->addGroupBy('orderdetails')
+            ->addGroupBy('suppliers')
+            ->addGroupBy('attachments')
+            ->addGroupBy('partUnit')
+            ->addGroupBy('parameters');
 
         //Get the results in the same order as the IDs were passed
         FieldHelper::addOrderByFieldParam($builder, 'part.id', 'ids');
