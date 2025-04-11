@@ -334,7 +334,6 @@ class Project extends AbstractStructuralDBElement
     {
         //If this project has subprojects, and these have builds part, they must be included in the BOM
         foreach ($this->getChildren() as $child) {
-            /** @var $child Project */
             if (!$child->getBuildPart() instanceof Part) {
                 continue;
             }

@@ -106,7 +106,7 @@ class PartFixtures extends Fixture implements DependentFixtureInterface
         $partLot2->setComment('Test');
         $partLot2->setNeedsRefill(true);
         $partLot2->setStorageLocation($manager->find(StorageLocation::class, 3));
-        $partLot2->setVendorBarcode('lot2_vendor_barcode');
+        $partLot2->setUserBarcode('lot2_vendor_barcode');
         $part->addPartLot($partLot2);
 
         $orderdetail = new Orderdetail();
@@ -131,7 +131,7 @@ class PartFixtures extends Fixture implements DependentFixtureInterface
 
         $attachment = new PartAttachment();
         $attachment->setName('Test2');
-        $attachment->setPath('invalid');
+        $attachment->setInternalPath('invalid');
         $attachment->setShowInTable(true);
         $attachment->setAttachmentType($manager->find(AttachmentType::class, 1));
         $part->addAttachment($attachment);
