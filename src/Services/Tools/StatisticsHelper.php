@@ -133,7 +133,6 @@ class StatisticsHelper
             throw new InvalidArgumentException('No count for the given type available!');
         }
 
-        /** @var EntityRepository $repo */
         $repo = $this->em->getRepository($arr[$type]);
 
         return $repo->count([]);

@@ -105,7 +105,7 @@ trait PKImportHelperTrait
         //Next comes the filename plus extension
         $path .= '/'.$attachment_row['filename'].'.'.$attachment_row['extension'];
 
-        $attachment->setPath($path);
+        $attachment->setInternalPath($path);
 
         return $attachment;
     }
@@ -205,10 +205,6 @@ trait PKImportHelperTrait
      */
     protected function setIDOfEntity(AbstractDBElement $element, int|string $id): void
     {
-        if (!is_int($id) && !is_string($id)) {
-            throw new \InvalidArgumentException('ID must be an integer or string');
-        }
-
         $id = (int) $id;
 
         $metadata = $this->em->getClassMetadata($element::class);

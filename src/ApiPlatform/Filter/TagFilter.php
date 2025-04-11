@@ -61,10 +61,10 @@ final class TagFilter extends AbstractFilter
         $expr = $queryBuilder->expr();
 
         $tmp = $expr->orX(
-            $expr->like('o.'.$property, ':' . $tag_identifier_prefix . '_1'),
-            $expr->like('o.'.$property, ':' . $tag_identifier_prefix . '_2'),
-            $expr->like('o.'.$property, ':' . $tag_identifier_prefix . '_3'),
-            $expr->eq('o.'.$property, ':' . $tag_identifier_prefix . '_4'),
+            'ILIKE(o.'.$property.', :' . $tag_identifier_prefix . '_1) = TRUE',
+            'ILIKE(o.'.$property.', :' . $tag_identifier_prefix . '_2) = TRUE',
+            'ILIKE(o.'.$property.', :' . $tag_identifier_prefix . '_3) = TRUE',
+            'ILIKE(o.'.$property.', :' . $tag_identifier_prefix . '_4) = TRUE',
         );
 
         $queryBuilder->andWhere($tmp);
@@ -89,12 +89,6 @@ final class TagFilter extends AbstractFilter
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'description' => 'Filter for tags of a part',
-                'openapi' => [
-                    'example' => '',
-                    'allowReserved' => false,// if true, query parameters will be not percent-encoded
-                    'allowEmptyValue' => true,
-                    'explode' => false, // to be true, the type must be Type::BUILTIN_TYPE_ARRAY, ?product=blue,green will be ?product=blue&product=green
-                ],
             ];
         }
         return $description;
