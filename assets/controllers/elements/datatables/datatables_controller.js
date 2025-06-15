@@ -250,7 +250,44 @@ export default class extends Controller {
 	}
 
 	_afterLoaded(dt) {
-		//Empty by default but can be overridden by child classes
+		let targetHeader = "Amount"; // Text in the header you want to match
+
+		// Find the column index by matching header text
+		let columnIndex = dt
+			.columns()
+			.header()
+			.toArray()
+			.findIndex((th) => {
+				return th.textContent.trim().startsWith(targetHeader);
+			});
+
+		if (columnIndex === -1) {
+			//if not found, try the german version
+			targetHeader = "Menge";
+			columnIndex = dt
+				.columns()
+				.header()
+				.toArray()
+				.findIndex((th) => {
+					return th.textContent.trim().startsWith(targetHeader);
+				});
+		}
+
+		if (columnIndex === -1) {
+			console.warn(`Column with header "${targetHeader}" not found.`);
+			return;
+		}
+
+		// Sum all values in the matched column
+		const total = dt
+			.column(columnIndex, { search: "applied" }) // filtered rows only
+			.data()
+			.toArray()
+			.reduce((sum, val) => sum + parseFloat(val) || 0, 0);
+
+		// Update the header
+		const headerCell = dt.column(columnIndex).header();
+		headerCell.textContent = `${targetHeader} (${total})`;
 	}
 
 	/**
