@@ -283,7 +283,7 @@ export default class extends Controller {
 			.column(columnIndex, { search: "applied" }) // filtered rows only
 			.data()
 			.toArray()
-			.reduce((sum, val) => sum + parseFloat(val) || 0, 0);
+			.reduce((sum, val) => (isNaN(parseFloat(val)) ? sum : sum + parseFloat(val)), 0);
 
 		// Update the header
 		const headerCell = dt.column(columnIndex).header();
