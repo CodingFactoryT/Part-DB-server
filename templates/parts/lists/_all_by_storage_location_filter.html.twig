@@ -7,7 +7,7 @@
     })
   }}
 
-  <div class="btn-group mb-3" role="group" aria-label="Parent Storage Location Filter" style="margin-top: 1rem">
+  <div class="btn-group mb-3 mt-3" role="group" aria-label="Parent Storage Location Filter">
     {% for location in parentLocations %}
       <button
         type="button"
@@ -39,50 +39,5 @@
   }
 </style>
 
-<script>
-  // Highlight button based on URL parameter
-  (function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const activeLocation = urlParams.get('part_filter[storelocation][value]');
-    
-    document.querySelectorAll('.btn-group button').forEach(button => {
-      if (button.getAttribute('data-location-id') === activeLocation) {
-        button.classList.add('active');
-      } else {
-        button.classList.remove('active');
-      }
-
-      // Add click listener to update form and submit
-      button.addEventListener('click', () => {
-        const form = document.querySelector('form[data-controller="helpers--form-cleanup"]');
-        const locationField = form.querySelector('[name="part_filter[storelocation][value]"]');
-        const operatorField = form.querySelector('[name="part_filter[storelocation][operator]"]');
-
-        const clickedId = button.getAttribute('data-location-id');
-
-        if (button.classList.contains('active')) {
-          locationField.value = '';
-          operatorField.value = '';
-        } else {
-          locationField.value = clickedId;
-          operatorField.value = 'INCLUDING_CHILDREN';
-        }
-
-        locationField.dispatchEvent(new Event('change', { bubbles: true }));
-        operatorField.dispatchEvent(new Event('change', { bubbles: true }));
-
-        form.requestSubmit();
-      });
-    });
-
-    // Hide the original form row for storelocation
-    const locationValue = document.querySelector('[name="part_filter[storelocation][value]"]');
-    if (locationValue) {
-      const parentRow = locationValue.closest('.row');
-      if (parentRow) {
-        parentRow.style.display = 'none';
-      }
-    }
-  })();
-</script>
+<script src="/js/filter-buttons.js"></script>
 
