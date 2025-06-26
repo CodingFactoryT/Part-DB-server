@@ -364,6 +364,17 @@ class PartListsController extends AbstractController
     #[Route(path: '/parts-by-storage-location', name: 'parts_show_all_by_storage_location')]
     public function showAllByStorageLocation(Request $request): Response
     {
-        return $this->showListWithFilter($request, 'parts/lists/all_by_storage_location_list.html.twig');
+        // Fetch all storage locations
+        $parentLocations = $this->entityManager->getRepository(StorageLocation::class)->findBy(['parent' => null]);
+
+        return $this->showListWithFilter(
+            $request,
+            'parts/lists/all_by_storage_location_list.html.twig',
+            null,
+            null,
+            [
+                'parentLocations' => $parentLocations, // pass it to Twig
+            ]
+        );
     }
 }
