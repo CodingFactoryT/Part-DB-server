@@ -255,6 +255,32 @@ export default class extends Controller {
 	}
 
 	_afterLoaded(dt) {
+		this.updateAmountHeaderWithTotalAmount();
+		dt.on("draw", () => {
+			this.updateAmountHeaderWithTotalAmount();
+		});
+	}
+
+	/**
+	 * Check if this datatable has selection feature enabled
+	 */
+	isSelectable() {
+		return this.element.dataset.select ?? false;
+	}
+
+	invertSelection() {
+		//Do nothing if the datatable is not selectable
+		if (!this.isSelectable()) {
+			return;
+		}
+
+		//Invert the selected rows on the datatable
+		const selected_rows = this._dt.rows({ selected: true });
+		this._dt.rows().select();
+		selected_rows.deselect();
+	}
+
+	updateAmountHeaderWithTotalAmount() {
 		let targetHeader = "Amount"; // Text in the header you want to match
 
 		// Find the column index by matching header text
@@ -293,24 +319,5 @@ export default class extends Controller {
 		// Update the header
 		const headerCell = dt.column(columnIndex).header();
 		headerCell.textContent = `${targetHeader} (${total})`;
-	}
-
-	/**
-	 * Check if this datatable has selection feature enabled
-	 */
-	isSelectable() {
-		return this.element.dataset.select ?? false;
-	}
-
-	invertSelection() {
-		//Do nothing if the datatable is not selectable
-		if (!this.isSelectable()) {
-			return;
-		}
-
-		//Invert the selected rows on the datatable
-		const selected_rows = this._dt.rows({ selected: true });
-		this._dt.rows().select();
-		selected_rows.deselect();
 	}
 }
