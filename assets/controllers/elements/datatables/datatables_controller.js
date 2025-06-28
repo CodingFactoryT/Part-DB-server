@@ -85,6 +85,11 @@ export default class extends Controller {
 			delete data.start;
 			//Reset the data length to the default value by deleting the length property
 			delete data.length;
+
+			if (window.location.pathname.endsWith("/parts-by-storage-location")) {
+				// Force ordering to group column, override saved order:
+				data.order = [[5, "asc"]];
+			}
 		}
 
 		return data;
@@ -160,11 +165,11 @@ export default class extends Controller {
 				endRender: null,
 				dataSrc: "storelocation",
 			},
-			ordering: false,
+			ordering: true,
 		};
 
 		if (GROUPING_ENABLED) {
-			options = { ...options, ...groupingOptions };
+			options = { ...options, ...groupingOptions, order: [[5, "asc"]] };
 		}
 
 		if (this.isSelectable()) {
