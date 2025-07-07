@@ -158,8 +158,9 @@ export default class extends Controller {
 				startRender: function (rows, group) {
 					const columnCount = rows.table().columns().count();
 
-					return $('<tr class="custom-group-header"/>')
-						.append('<td colspan="' + columnCount + '" style="background-color: #121416; color: #fff; font-weight: bold;">' + group + "</td>")
+					return $("<tr/>")
+						.attr("style", "all: unset; display: table-row;")
+						.append('<td colspan="' + columnCount + '" style="all: unset; display: table-cell; border: none; padding: 0.25rem 0.25rem; background-color: #121416; color: #fff; font-weight: bold;">' + group + "</td>")
 						.get(0);
 				},
 				endRender: null,
