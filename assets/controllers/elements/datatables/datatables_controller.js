@@ -157,10 +157,31 @@ export default class extends Controller {
 			rowGroup: {
 				startRender: function (rows, group) {
 					const columnCount = rows.table().columns().count();
+					const backgroundColor = "#121416";
 
 					return $("<tr/>")
-						.attr("style", "all: unset; display: table-row;")
-						.append('<td colspan="' + columnCount + '" style="all: unset; display: table-cell; border: none; padding: 0.25rem 0.25rem; background-color: #121416; color: #fff; font-weight: bold;">' + group + "</td>")
+						.attr({
+							style: `all: unset; display: table-row; background-color: ${backgroundColor};`,
+							"data-group": group ?? "",
+						})
+						.append(
+							`
+								<td class="dt-select no-colvis" style="border: none; background-color: ${backgroundColor}; box-shadow: none;">
+									<input aria-label="Select group" class="dt-select-checkbox group-select-checkbox" type="checkbox">
+								</td>
+								<td 
+									colspan=" ${columnCount}"
+									style="
+										padding: 0.25rem 0.25rem;
+										border: none;
+										background-color: ${backgroundColor};
+										box-shadow: none;
+										font-weight: bold;
+									"> 
+										${group} 
+								</td>
+							`
+						)
 						.get(0);
 				},
 				endRender: null,
@@ -232,6 +253,48 @@ export default class extends Controller {
 
 		//Allow to further configure the datatable
 		promise.then(this._afterLoaded.bind(this));
+
+		// Attach handler for clicking group checkboxes
+		promise.then((dt) => {
+			$(this.dtTarget).on("click", ".group-select-checkbox", (event) => {
+				const checkbox = event.currentTarget;
+				const groupName = $(checkbox).closest("tr").data("group");
+
+				const rowsInGroup = dt.rows((idx, data) => {
+					return data.storelocation === groupName;
+				});
+
+				if (checkbox.checked) {
+					rowsInGroup.select();
+				} else {
+					rowsInGroup.deselect();
+				}
+			});
+		});
+
+		// Update group checkbox indeterminate state when selection changes
+		promise.then((dt) => {
+			dt.on("select deselect", () => {
+				$(".group-select-checkbox").each(function () {
+					const $checkbox = $(this);
+					const groupName = $checkbox.closest("tr").data("group");
+					const rowsInGroup = dt.rows((idx, data) => data.storelocation === groupName);
+
+					const selectedCount = rowsInGroup.nodes().to$().filter(".selected").length;
+
+					if (selectedCount === 0) {
+						this.checked = false;
+						this.indeterminate = false;
+					} else if (selectedCount === rowsInGroup.count()) {
+						this.checked = true;
+						this.indeterminate = false;
+					} else {
+						this.checked = false;
+						this.indeterminate = true;
+					}
+				});
+			});
+		});
 
 		console.debug("Datatables inited.");
 	}
